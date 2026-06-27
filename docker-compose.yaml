@@ -1,0 +1,15 @@
+services:
+  docling:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: book-processor
+    image: rengodoy/book-processor:latest
+    ports:
+      - "8000:8000"  # Mapeia a porta 8000 do contêiner para a 8000 do host
+      - "5432:5432"
+    volumes:
+      - .:/app  # Mapeia o código do projeto para dentro do contêiner para facilitar o desenvolvimento
+    stdin_open: true
+    tty: true
+#     restart: always

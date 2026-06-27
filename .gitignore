@@ -1,2 +1,21 @@
-*_faiss_index
-venv
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment / secrets
+.env
+
+# Generated RAG indexes
+indexes/
+*_faiss_index/
+
+# Source documents (don't commit user books)
+*.pdf
