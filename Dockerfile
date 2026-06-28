@@ -4,6 +4,7 @@ FROM ubuntu:noble
 RUN apt-get update && apt-get install -y --no-install-recommends \
         wget gnupg2 lsb-release apt-transport-https curl ca-certificates \
         libtesseract-dev libleptonica-dev pkg-config \
+        libgl1 libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN echo "deb https://notesalexp.org/tesseract-ocr5/noble/ noble main" \
@@ -21,12 +22,14 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 ENV UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
+    UV_PYTHON=3.13 \
     PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
 # Install dependencies first (better layer caching), then the project.
-COPY pyproject.toml uv.lock README.md ./
+# .python-version pins CPython 3.13 (faiss-cpu has no 3.14 wheel yet).
+COPY pyproject.toml uv.lock README.md .python-version ./
 RUN uv sync --frozen --no-install-project --no-dev
 
 COPY . .

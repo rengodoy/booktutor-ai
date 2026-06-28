@@ -17,5 +17,7 @@ venv/
 indexes/
 *_faiss_index/
 
-# Source documents (don't commit user books)
+# Source documents / extracted text (don't commit user books)
 *.pdf
+pdf/
+books/

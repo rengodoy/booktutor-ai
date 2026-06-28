@@ -11,9 +11,11 @@ dependencies = [
     "langchain>=0.3.25",
     "langchain-community>=0.3.21",
     "langchain-core>=0.3.63",
+    "langchain-huggingface>=0.2.0",
     "langchain-openai>=0.3.18",
     "langchain-text-splitters>=0.3.8",
     "pydantic-settings>=2.5.0",
+    "sentence-transformers>=3.0.0",
     "tesserocr>=2.8.0",
     "torch>=2.7.1",
 ]

@@ -7,7 +7,7 @@ def test_defaults():
     assert s.llm_model == "gpt-4o-mini"
     assert s.embedding_model == "text-embedding-3-small"
     assert s.chunk_size == 1000
-    assert s.do_ocr is True
+    assert s.ocr_engine == "easyocr"
 
 
 def test_env_override(monkeypatch):
@@ -33,3 +33,30 @@ def test_embedding_explicit_overrides_fallback(monkeypatch):
     monkeypatch.setenv("EMBEDDING_API_BASE", "http://localhost:8080/v1")
     s = Settings(_env_file=None)
     assert s.resolved_embedding_api_base == "http://localhost:8080/v1"
+
+
+def test_embedding_backend_defaults_openai():
+    s = Settings(_env_file=None)
+    assert s.embedding_backend == "openai"
+    assert s.local_embedding_model == "sentence-transformers/all-MiniLM-L6-v2"
+
+
+def test_embedding_backend_local(monkeypatch):
+    monkeypatch.setenv("EMBEDDING_BACKEND", "local")
+    monkeypatch.setenv("LOCAL_EMBEDDING_MODEL", "intfloat/multilingual-e5-small")
+    s = Settings(_env_file=None)
+    assert s.embedding_backend == "local"
+    assert s.local_embedding_model == "intfloat/multilingual-e5-small"
+
+
+def test_ocr_defaults():
+    s = Settings(_env_file=None)
+    assert s.ocr_engine == "easyocr"
+    assert s.vlm_ocr_model == "unsloth/DeepSeek-OCR"
+    assert s.vlm_ocr_max_tokens == 4096
+
+
+def test_ocr_language_list(monkeypatch):
+    monkeypatch.setenv("OCR_LANGUAGES", " pt , en ")
+    s = Settings(_env_file=None)
+    assert s.ocr_language_list == ["pt", "en"]

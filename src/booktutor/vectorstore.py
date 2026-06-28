@@ -51,14 +51,12 @@ def build_collection(
 ) -> FAISS:
     """Process the given PDFs into a new FAISS collection and persist it."""
     # Imported here so loaders' heavy docling import only happens on ingest.
-    from booktutor.loaders import DoclingBookLoader
+    from booktutor.loaders import make_loader
 
     splitter = make_splitter(settings)
     splits = []
     for pdf in pdf_paths:
-        loader = DoclingBookLoader(
-            pdf, do_ocr=settings.do_ocr, num_threads=settings.ocr_num_threads
-        )
+        loader = make_loader(settings, pdf)
         docs = loader.load()
         splits.extend(splitter.split_documents(docs))
 

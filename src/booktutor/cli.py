@@ -37,6 +37,22 @@ def cmd_ingest(args: argparse.Namespace, settings: Settings) -> int:
     return 0
 
 
+def cmd_extract(args: argparse.Namespace, settings: Settings) -> int:
+    if not _check_files_exist([args.source]):
+        return 1
+    from booktutor.loaders import make_loader
+
+    loader = make_loader(settings, args.source)
+    text = "\n\n".join(doc.page_content for doc in loader.load())
+
+    out = Path(args.output) if args.output else Path(args.source).with_suffix(".md")
+    out.write_text(text, encoding="utf-8")
+    print(f"\n✅ Extracted markdown -> {out}  ({len(text):,} chars)")
+    print("   Review/edit it, then ingest the reviewed text:")
+    print(f"     booktutor ingest {out} -c <collection>")
+    return 0
+
+
 def cmd_list(args: argparse.Namespace, settings: Settings) -> int:
     collections = vs.list_collections(settings)
     if not collections:
@@ -111,8 +127,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_ingest = sub.add_parser("ingest", help="Process PDF(s) into a collection.")
-    p_ingest.add_argument("pdfs", nargs="+", help="Path(s) to PDF file(s).")
+    p_ingest = sub.add_parser("ingest", help="Process PDF(s)/markdown into a collection.")
+    p_ingest.add_argument(
+        "pdfs", nargs="+", help="Path(s) to PDF or reviewed .md/.txt file(s)."
+    )
     p_ingest.add_argument(
         "-c", "--collection", help="Collection name (default: first file's name)."
     )
@@ -129,6 +147,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Print the retrieved context chunks with each answer.",
     )
     p_chat.set_defaults(func=cmd_chat)
+
+    p_extract = sub.add_parser(
+        "extract",
+        help="Extract a PDF to markdown for human review (no embedding).",
+    )
+    p_extract.add_argument("source", help="Path to the PDF to extract.")
+    p_extract.add_argument(
+        "-o", "--output", help="Output markdown path (default: <source>.md)."
+    )
+    p_extract.set_defaults(func=cmd_extract)
 
     p_list = sub.add_parser("list", help="List available collections.")
     p_list.set_defaults(func=cmd_list)
