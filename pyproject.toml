@@ -5,11 +5,11 @@ description = "OCR any PDF into high-quality Markdown (docling / DeepSeek-OCR)."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "docling>=2.34.0",
+    # easyocr + tesserocr OCR backends are optional extras since docling 2.10x.
+    "docling[easyocr,tesserocr]>=2.107.0",
     "huggingface-hub[hf-xet]>=0.32.3",
     "openai>=1.30.0",
     "pydantic-settings>=2.5.0",
-    "tesserocr>=2.8.0",
     "torch>=2.7.1",
     # DeepSeek-OCR-2 in-process (OCR_ENGINE=deepseek2) remote-code deps.
     # flash-attn is optional (set DS2_ATTN_IMPL=flash_attention_2 if installed).
@@ -36,14 +36,12 @@ build-backend = "hatchling.build"
 packages = ["src/booktutor"]
 
 [tool.uv]
-# Conservative upgrades: hold the GPU/ML stack at the known-good versions.
-# torch 2.11 / transformers 5 break docling 2.36 and cause a torch/torchvision
-# CUDA wheel mismatch (cu128 vs cu130). Everything else is free to upgrade.
+# Hold only the GPU pair at a CUDA-consistent (cu128) version: a blind torch
+# bump pulls a torchvision built against cu130 -> "compiled with different CUDA
+# major versions" at import. docling/transformers are free to upgrade.
 constraint-dependencies = [
     "torch==2.7.1",
     "torchvision==0.22.1",
-    "transformers==4.52.4",
-    "docling==2.36.1",
 ]
 
 [[tool.uv.index]]

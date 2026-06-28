@@ -99,9 +99,10 @@ uv run booktutor extract livro.pdf     # or: docker compose run --rm booktutor e
 
 > ⚠️ vLLM doesn't yet serve DeepSeek-OCR-2 on CUDA (`DeepseekOCR2ForCausalLM`
 > not supported; vLLM issue #41468), which is why this path is in-process. The
-> model card pins `transformers==4.46.3` while this project holds `4.52.4`
-> (docling needs ~4.5x); the remote code usually spans that range — if it
-> breaks, pin `transformers` or run `deepseek2` in a dedicated environment.
+> model card pins `transformers==4.46.3` while this project resolves
+> `transformers 5.x` (required by docling 2.10x). The remote code may not load
+> on transformers 5 — if it breaks, run `deepseek2` in a dedicated environment
+> pinned to `transformers==4.46.3`, or try `unsloth/DeepSeek-OCR-2`.
 > `flash-attn` is optional: default `eager` works everywhere.
 
 **GPU sizing.** DeepSeek-OCR is ~3B params — it fits comfortably in **16 GB**

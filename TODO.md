@@ -16,8 +16,12 @@
 
 ### 2a. Atualizar dependências
 - [x] `uv lock --upgrade` + `uv sync`; rodar `pytest` e `ruff check`
-      (conservador: segura torch/torchvision/transformers/docling via
-      `[tool.uv] constraint-dependencies`; resto atualizado)
+- [x] Upgrade agressivo do docling: 2.36.1 → 2.107.0 (docling-parse 4→7,
+      `docling[easyocr,tesserocr]` extras; puxou transformers 4.52→5.12.1).
+      Validado: imports, build de converter (easyocr/tesseract/none) e
+      convert+export_to_markdown de 2 páginas reais OK.
+- [x] Só o par GPU fica pinado (torch 2.7.1 / torchvision 0.22.1, cu128) —
+      bump cego puxa torchvision cu130 e quebra no import.
 - [ ] (opcional) subir os floors `>=` no `pyproject.toml` pros novos resolvidos
 
 ### 2b. DeepSeek-OCR 2
@@ -28,8 +32,9 @@
 - [x] Prompt grounding + params (base_size 1024, image_size 768, crop_mode,
       attn_impl `eager` por padrão → roda sem flash-attn)
 - [x] Deps: `transformers`, `einops`, `addict`, `easydict` (flash-attn opcional)
-- [ ] **Validar end-to-end numa GPU** (download do modelo ~vários GB; conferir
-      compat transformers 4.52 vs 4.46.3 do model card)
+- [ ] **Validar end-to-end numa GPU** (download do modelo ~vários GB; risco:
+      remote-code do OCR-2 pede transformers 4.46.3 e agora resolvemos 5.x por
+      causa do docling — se quebrar, rodar deepseek2 em env separado pinado)
 
 ### 2c. Merge multi-engine via Vision-LLM
 - [ ] Avaliar otimizar o OCR com um Vision-LLM (ex: Qwen3-VL) que reconcilia a saída

@@ -193,9 +193,11 @@ class DeepSeekOcr2Loader:
     ``attn_impl="eager"`` runs anywhere; ``"flash_attention_2"`` is faster but
     needs ``flash-attn`` installed.
 
-    Note: the model card pins ``transformers==4.46.3``; this project holds
-    ``4.52.4`` (docling needs ~4.5x). The remote code usually works across that
-    range — validate end-to-end on your GPU and pin transformers if it breaks.
+    Note: the model card pins ``transformers==4.46.3``; this project resolves
+    ``transformers 5.x`` (required by docling 2.10x). The remote code may not
+    load on transformers 5 — validate end-to-end on your GPU; if it breaks, run
+    ``deepseek2`` in a dedicated env pinned to ``transformers==4.46.3`` (or use
+    the ``unsloth/DeepSeek-OCR-2`` variant, which tends to track newer releases).
     """
 
     def __init__(
