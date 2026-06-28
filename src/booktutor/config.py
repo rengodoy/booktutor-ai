@@ -56,6 +56,10 @@ class Settings(BaseSettings):
     # "eager" runs anywhere; "flash_attention_2" is faster but needs flash-attn.
     ds2_attn_impl: str = Field(default="eager")
     ds2_dpi: int = Field(default=144)
+    # Standalone DeepSeek-OCR-2 HTTP server (booktutor-deepseek2-server). Lets
+    # the merge engine use deepseek2 as a source without the venv conflict.
+    ds2_server_host: str = Field(default="0.0.0.0")
+    ds2_server_port: int = Field(default=8001)
 
     # --- Merge (adaptive multi-engine OCR reconciled by a Vision-LLM) -------
     # Escalation ladder: ';'-separated tiers, each a ','-list of source engines

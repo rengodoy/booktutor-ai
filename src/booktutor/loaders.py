@@ -205,6 +205,61 @@ class VlmOcrLoader:
         return "\n\n".join(pages_md)
 
 
+def load_deepseek2_model(model_id: str, attn_impl: str = "eager"):
+    """Load DeepSeek-OCR-2 (model, tokenizer) onto CUDA via transformers.
+
+    Shared by the per-PDF loader and the standalone OCR server so the heavy
+    weights load once.
+    """
+    import torch
+    from transformers import AutoModel, AutoTokenizer
+
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    model = AutoModel.from_pretrained(
+        model_id,
+        _attn_implementation=attn_impl,
+        trust_remote_code=True,
+        use_safetensors=True,
+    )
+    model = model.eval().cuda().to(torch.bfloat16)
+    return model, tokenizer
+
+
+def deepseek2_ocr_image(
+    model,
+    tokenizer,
+    image_path: str,
+    *,
+    prompt: str,
+    base_size: int = 1024,
+    image_size: int = 768,
+    crop_mode: bool = True,
+) -> str:
+    """OCR one image file with a loaded DeepSeek-OCR-2 model -> markdown.
+
+    ``infer`` streams to stdout and returns None; with ``save_results`` it writes
+    the cleaned markdown to ``<output_path>/result.mmd`` (strips grounding/box
+    refs). We read that and silence the token streamer.
+    """
+    with tempfile.TemporaryDirectory() as out_dir:
+        with contextlib.redirect_stdout(io.StringIO()):
+            model.infer(
+                tokenizer,
+                prompt=prompt,
+                image_file=image_path,
+                output_path=out_dir,
+                base_size=base_size,
+                image_size=image_size,
+                crop_mode=crop_mode,
+                save_results=True,
+            )
+        mmd_path = os.path.join(out_dir, "result.mmd")
+        if os.path.exists(mmd_path):
+            with open(mmd_path, encoding="utf-8") as fh:
+                return fh.read()
+    return ""
+
+
 class DeepSeekOcr2Loader:
     """OCR a PDF with DeepSeek-OCR-2 loaded **in-process** via transformers.
 
@@ -262,44 +317,23 @@ class DeepSeekOcr2Loader:
 
     def load(self) -> str:
         """Return the OCR'd document as markdown (pages joined)."""
-        import torch
-        from transformers import AutoModel, AutoTokenizer
-
         print(f"\n📚 Processing book: {self.file_path} (ocr=deepseek2:{self.model})")
-        tokenizer = AutoTokenizer.from_pretrained(self.model, trust_remote_code=True)
-        model = AutoModel.from_pretrained(
-            self.model,
-            _attn_implementation=self.attn_impl,
-            trust_remote_code=True,
-            use_safetensors=True,
-        )
-        model = model.eval().cuda().to(torch.bfloat16)
+        model, tokenizer = load_deepseek2_model(self.model, self.attn_impl)
 
         start = time.time()
         pages_md: list[str] = []
         with tempfile.TemporaryDirectory() as tmp:
             page_paths = self._render_pages_to(tmp)
             for idx, path in enumerate(page_paths, 1):
-                # infer() streams to stdout and returns None; with save_results
-                # it writes the cleaned markdown to <out_dir>/result.mmd (strips
-                # grounding/box refs). Read that; silence the token streamer.
-                out_dir = os.path.join(tmp, f"out_{idx:04d}")
-                with contextlib.redirect_stdout(io.StringIO()):
-                    model.infer(
-                        tokenizer,
-                        prompt=self.prompt,
-                        image_file=path,
-                        output_path=out_dir,
-                        base_size=self.base_size,
-                        image_size=self.image_size,
-                        crop_mode=self.crop_mode,
-                        save_results=True,
-                    )
-                mmd_path = os.path.join(out_dir, "result.mmd")
-                page_md = ""
-                if os.path.exists(mmd_path):
-                    with open(mmd_path, encoding="utf-8") as fh:
-                        page_md = fh.read()
+                page_md = deepseek2_ocr_image(
+                    model,
+                    tokenizer,
+                    path,
+                    prompt=self.prompt,
+                    base_size=self.base_size,
+                    image_size=self.image_size,
+                    crop_mode=self.crop_mode,
+                )
                 pages_md.append(page_md)
                 print(f"  page {idx} ✓", end="\r")
 

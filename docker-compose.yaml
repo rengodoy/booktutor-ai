@@ -30,11 +30,12 @@ services:
     command: ["--help"]
 
   # ----------------------------------------------------------------------------
-  # DeepSeek-OCR-2 in-process (OCR_ENGINE=deepseek2). Its own image because the
-  # model's remote code needs transformers <4.48, which conflicts with docling.
-  # Needs a CUDA GPU. Started only with the "deepseek2" profile:
-  #   docker compose --profile deepseek2 run --rm deepseek2 extract books/livro.pdf
-  # In .env set: OCR_ENGINE=deepseek2
+  # DeepSeek-OCR-2 in its own image (transformers <4.48 conflicts with docling).
+  # Needs a CUDA GPU. Two uses (profile "deepseek2"):
+  #   * HTTP OCR server (default CMD) — lets the `merge` engine use deepseek2 as
+  #     a source tier:  docker compose --profile deepseek2 up -d deepseek2
+  #   * one-off CLI extract (override the command):
+  #     docker compose --profile deepseek2 run --rm deepseek2 booktutor extract books/livro.pdf
   # ----------------------------------------------------------------------------
   deepseek2:
     build:
@@ -45,6 +46,8 @@ services:
     profiles: ["deepseek2"]
     env_file:
       - .env
+    ports:
+      - "8001:8001"   # OCR HTTP server (DS2_SERVER_PORT)
     volumes:
       - ./books:/app/books
       - ./pdf:/app/pdf
@@ -58,7 +61,12 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    command: ["--help"]
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,os; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\\\"DS2_SERVER_PORT\\\",\\\"8001\\\")}/health')\""]
+      interval: 30s
+      timeout: 5s
+      retries: 20
+      start_period: 300s
 
   # ----------------------------------------------------------------------------
   # DeepSeek-OCR served by vLLM (OpenAI-compatible vision endpoint), used when

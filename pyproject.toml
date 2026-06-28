@@ -35,10 +35,13 @@ deepseek2 = [
     "matplotlib>=3.8.0",
     "pypdfium2>=4.30",
     "pillow>=10.0",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
 ]
 
 [project.scripts]
 booktutor = "booktutor.cli:main"
+booktutor-deepseek2-server = "booktutor.ds2_server:main"
 
 [dependency-groups]
 dev = [

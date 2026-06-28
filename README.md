@@ -107,7 +107,18 @@ DS2_ATTN_IMPL=eager                    # "flash_attention_2" is faster but needs
 
 ```bash
 docker compose --profile deepseek2 build deepseek2
-docker compose --profile deepseek2 run --rm deepseek2 extract books/livro.pdf
+# one-off CLI extract (override the default command):
+docker compose --profile deepseek2 run --rm deepseek2 booktutor extract books/livro.pdf
+```
+
+The `deepseek2` image also runs an **HTTP OCR server** (its default command,
+`booktutor-deepseek2-server`, on port 8001) so the `merge` engine can use
+DeepSeek-OCR-2 as a source tier without the venv conflict:
+
+```bash
+docker compose --profile deepseek2 up -d deepseek2          # loads the model once
+curl -s -XPOST localhost:8001/ocr -H 'content-type: application/json' \
+     -d '{"image_b64":"<base64 png>"}'                      # -> {"markdown": "..."}
 ```
 
 Locally (its own extra; do **not** mix with the docling extra):

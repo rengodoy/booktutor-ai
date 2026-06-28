@@ -26,5 +26,8 @@ RUN uv sync --frozen --no-install-project --no-dev --extra deepseek2
 COPY . .
 RUN uv sync --frozen --no-dev --extra deepseek2
 
-ENTRYPOINT ["booktutor"]
-CMD ["--help"]
+# Default: run the OCR HTTP server (used as a `merge` source tier). For a one-off
+# CLI extract, override the command:
+#   docker compose run --rm deepseek2 booktutor extract books/livro.pdf
+EXPOSE 8001
+CMD ["booktutor-deepseek2-server"]

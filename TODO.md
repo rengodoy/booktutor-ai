@@ -49,8 +49,12 @@ sempre lê a imagem da página. `OCR_ENGINE=merge`. Endpoint reconciliador: a de
       página×engine, engine que falha vira candidato vazio. **Validado** com
       `qwen-27b` (llama-swap @127.0.0.1:8080): páginas reais → markdown PT limpo,
       conf 0.95; o reconciliador faz OCR da imagem mesmo com candidato vazio.
-- [ ] 2c-2: expor deepseek2 como serviço HTTP de OCR (servidor no
-      `Dockerfile.deepseek2`) — sem isso o tier deepseek2 não entra (conflito venv).
+- [x] 2c-2: deepseek2 exposto como serviço HTTP de OCR
+      (`booktutor-deepseek2-server`, FastAPI/uvicorn, `POST /ocr` → markdown,
+      modelo carrega 1x). Helpers `load_deepseek2_model`/`deepseek2_ocr_image`
+      reusados pelo loader. Dockerfile.deepseek2 roda o servidor (porta 8001),
+      compose com porta+healthcheck. **Validado**: health OK + OCR de página real
+      via HTTP → 2019 chars de PT limpo.
 - [ ] 2c-3: adicionar o tier deepseek2 (via serviço) ao orquestrador + validar.
 
 ## 3. TUI (glyph)
