@@ -66,13 +66,19 @@ class Settings(BaseSettings):
     # (docling engines: easyocr, tesseract). Each page escalates to the next tier
     # until the reconciler's confidence reaches merge_min_confidence (or the
     # tiers run out). The reconciler always also reads the page image.
-    merge_tiers: str = Field(default="easyocr;tesseract;easyocr,tesseract")
+    merge_tiers: str = Field(
+        default="easyocr;tesseract;easyocr,tesseract;easyocr,tesseract,deepseek2"
+    )
     merge_api_base: str = Field(default="http://127.0.0.1:8080/v1")
     merge_api_key: str = Field(default="not-needed")
     merge_model: str = Field(default="qwen-27b")
     merge_max_tokens: int = Field(default=8192)
     merge_dpi: int = Field(default=144)
     merge_min_confidence: float = Field(default=0.85)
+    # The "deepseek2" source tier calls the standalone DeepSeek-OCR-2 HTTP server
+    # (booktutor-deepseek2-server / compose service `deepseek2`). Empty/down ->
+    # that candidate is skipped (the run continues with the other engines).
+    merge_deepseek2_url: str = Field(default="http://127.0.0.1:8001")
 
     @property
     def ocr_language_list(self) -> list[str]:

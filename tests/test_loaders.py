@@ -64,7 +64,13 @@ def test_make_loader_merge():
     assert isinstance(loader, MergeOcrLoader)
     assert loader.model == "qwen-27b"
     assert loader.min_confidence == 0.9
-    assert loader.tiers == [["easyocr"], ["tesseract"], ["easyocr", "tesseract"]]
+    assert loader.deepseek2_url == "http://127.0.0.1:8001"
+    assert loader.tiers == [
+        ["easyocr"],
+        ["tesseract"],
+        ["easyocr", "tesseract"],
+        ["easyocr", "tesseract", "deepseek2"],
+    ]
 
 
 def test_merge_tier_list_parsing():

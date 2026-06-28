@@ -395,8 +395,10 @@ class MergeOcrLoader:
     escalating never re-runs an engine.
 
     Runs in the docling image (docling engines + an OpenAI-compatible vision
-    endpoint). The ``deepseek2`` tier needs that engine exposed as a service
-    (separate image) — see Dockerfile.deepseek2 / TODO 2c-2.
+    endpoint). The ``deepseek2`` source engine can't run here (transformers
+    conflict), so it's called over HTTP at ``deepseek2_url`` — the standalone
+    DeepSeek-OCR-2 server (see ds2_server / Dockerfile.deepseek2). If that
+    service is down, the deepseek2 candidate is skipped.
     """
 
     def __init__(
@@ -413,6 +415,7 @@ class MergeOcrLoader:
         max_tokens: int = 8192,
         dpi: int = 144,
         min_confidence: float = 0.85,
+        deepseek2_url: str = "http://127.0.0.1:8001",
     ) -> None:
         self.file_path = file_path
         self.tiers = tiers
@@ -425,6 +428,7 @@ class MergeOcrLoader:
         self.max_tokens = max_tokens
         self.dpi = dpi
         self.min_confidence = min_confidence
+        self.deepseek2_url = deepseek2_url
 
     def _converter_for(self, engine: str, cache: dict):
         if engine not in cache:
@@ -440,6 +444,27 @@ class MergeOcrLoader:
         # page_range is 1-indexed and inclusive.
         result = converter.convert(self.file_path, page_range=(page_no, page_no))
         return result.document.export_to_markdown()
+
+    def _ocr_deepseek2(self, png_b64: str) -> str:
+        # Call the standalone DeepSeek-OCR-2 HTTP server (separate venv/image).
+        import json
+        import urllib.request
+
+        req = urllib.request.Request(
+            f"{self.deepseek2_url.rstrip('/')}/ocr",
+            data=json.dumps({"image_b64": png_b64}).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=600) as resp:
+            return json.loads(resp.read().decode()).get("markdown", "")
+
+    def _ocr_engine_page(
+        self, engine: str, converters: dict, page_no: int, png_b64: str
+    ) -> str:
+        if engine == "deepseek2":
+            return self._ocr_deepseek2(png_b64)
+        converter = self._converter_for(engine, converters)
+        return self._ocr_page(converter, page_no)
 
     def _reconcile(
         self, client, png_b64: str, candidates: dict[str, str]
@@ -502,12 +527,14 @@ class MergeOcrLoader:
                 for tier in self.tiers:
                     for engine in tier:
                         if engine not in engine_text:
-                            # A failed engine (e.g. tesseract with no tessdata)
-                            # becomes an empty candidate; the reconciler still has
-                            # the image and the other engines.
+                            # A failed engine (tesseract without tessdata, the
+                            # deepseek2 service being down, ...) becomes an empty
+                            # candidate; the reconciler still has the image and
+                            # the other engines.
                             try:
-                                converter = self._converter_for(engine, converters)
-                                engine_text[engine] = self._ocr_page(converter, page_no)
+                                engine_text[engine] = self._ocr_engine_page(
+                                    engine, converters, page_no, png_b64
+                                )
                             except Exception as exc:  # noqa: BLE001
                                 engine_text[engine] = ""
                                 print(f"\n  [engine {engine} failed: {exc}]")
@@ -547,6 +574,7 @@ def make_loader(
             max_tokens=settings.merge_max_tokens,
             dpi=settings.merge_dpi,
             min_confidence=settings.merge_min_confidence,
+            deepseek2_url=settings.merge_deepseek2_url,
         )
     if settings.ocr_engine == "vlm":
         return VlmOcrLoader(

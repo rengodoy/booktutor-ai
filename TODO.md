@@ -55,7 +55,13 @@ sempre lê a imagem da página. `OCR_ENGINE=merge`. Endpoint reconciliador: a de
       reusados pelo loader. Dockerfile.deepseek2 roda o servidor (porta 8001),
       compose com porta+healthcheck. **Validado**: health OK + OCR de página real
       via HTTP → 2019 chars de PT limpo.
-- [ ] 2c-3: adicionar o tier deepseek2 (via serviço) ao orquestrador + validar.
+- [x] 2c-3: tier deepseek2 ligado ao orquestrador via HTTP (`MERGE_DEEPSEEK2_URL`),
+      ladder default inclui `easyocr,tesseract,deepseek2`; engine HTTP que falha
+      vira candidato vazio. **Validado**: o tier deepseek2 retornou 2019 chars via
+      serviço (easyocr 2149 + deepseek2 2019 numa página). Caveat de hardware:
+      ds2 (~14.5GB) + reconciliador 27B (~15GB) + easyocr não cabem juntos em
+      2×16GB — rodar o ds2 server em GPU/host dedicado, ou usar reconciliador
+      menor (qwen-9b), ou deepseek2 standalone. Documentado no README.
 
 ## 3. TUI (glyph)
 - [ ] Implementar a TUI descrita em `design_handoff_glyph_tui/README.md` usando Textual

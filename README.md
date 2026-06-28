@@ -150,8 +150,22 @@ MERGE_MIN_CONFIDENCE=0.85
 
 Runs in the docling image (docling engines + the vision endpoint). A strong
 vision reconciler does much of the OCR from the image itself, so even weak source
-candidates still yield good Markdown. Including `deepseek2` as a tier needs it
-exposed as a service (separate image) — see TODO 2c-2/2c-3.
+candidates still yield good Markdown.
+
+A `deepseek2` source engine in a tier is called over HTTP at `MERGE_DEEPSEEK2_URL`
+(the standalone DeepSeek-OCR-2 server). Bring it up first:
+
+```bash
+docker compose --profile deepseek2 up -d deepseek2     # MERGE_DEEPSEEK2_URL=http://deepseek2:8001
+```
+
+> **VRAM:** each big model wants roughly a full 16 GB GPU — DeepSeek-OCR-2
+> inference ≈14.5 GB and a 27B reconciler ≈15 GB — so the `deepseek2` tier plus a
+> large reconciler plus EasyOCR won't co-reside on a single 2×16 GB box. Give the
+> `deepseek2` server its own GPU/host (point `MERGE_DEEPSEEK2_URL` at it), use a
+> smaller reconciler (e.g. `MERGE_MODEL=qwen-9b`), or keep `deepseek2` out of the
+> ladder and run it standalone (`OCR_ENGINE=deepseek2`). If the server is down,
+> the deepseek2 candidate is simply skipped.
 
 **GPU sizing.** DeepSeek-OCR is ~3B params — it fits comfortably in **16 GB**
 (e.g. an RTX 5080 or RTX 2000 Ada), single GPU, no tensor-parallel. With two
