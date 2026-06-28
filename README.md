@@ -26,6 +26,7 @@ Pick the engine and **escalate manually** if the text comes out poor
 | `easyocr`   | good (GPU) | **local (uv)** |
 | `tesseract` | good, classic | **Docker** (lang packs installed) |
 | `vlm`       | best — DeepSeek-OCR reads the page image | **Docker** (vLLM service) |
+| `deepseek2` | best — DeepSeek-OCR-2 (DeepEncoder V2), in-process | local/Docker, **CUDA GPU** |
 
 Set `OCR_FORCE_FULL_PAGE=true` to **ignore a garbled embedded text layer** and
 re-OCR from the page images — the single biggest fix for mojibake like
@@ -79,6 +80,29 @@ docker compose run --rm booktutor extract books/livro.pdf
 > adjust the image tag or flags on the `deepseek-ocr` service in
 > `docker-compose.yaml` (see the
 > [Unsloth guide](https://unsloth.ai/docs/models/tutorials/deepseek-ocr-how-to-run-and-fine-tune)).
+
+### DeepSeek-OCR-2 (in-process, no server)
+
+`OCR_ENGINE=deepseek2` runs **DeepSeek-OCR-2** (DeepEncoder V2) directly in the
+process via transformers (`trust_remote_code`) — no separate server. Needs a
+**CUDA GPU**; the weights download once and are cached by Hugging Face.
+
+```dotenv
+OCR_ENGINE=deepseek2
+DS2_MODEL=deepseek-ai/DeepSeek-OCR-2   # or unsloth/DeepSeek-OCR-2 (set DS2_IMAGE_SIZE=640)
+DS2_ATTN_IMPL=eager                    # "flash_attention_2" is faster but needs flash-attn
+```
+
+```bash
+uv run booktutor extract livro.pdf     # or: docker compose run --rm booktutor extract books/livro.pdf
+```
+
+> ⚠️ vLLM doesn't yet serve DeepSeek-OCR-2 on CUDA (`DeepseekOCR2ForCausalLM`
+> not supported; vLLM issue #41468), which is why this path is in-process. The
+> model card pins `transformers==4.46.3` while this project holds `4.52.4`
+> (docling needs ~4.5x); the remote code usually spans that range — if it
+> breaks, pin `transformers` or run `deepseek2` in a dedicated environment.
+> `flash-attn` is optional: default `eager` works everywhere.
 
 **GPU sizing.** DeepSeek-OCR is ~3B params — it fits comfortably in **16 GB**
 (e.g. an RTX 5080 or RTX 2000 Ada), single GPU, no tensor-parallel. With two

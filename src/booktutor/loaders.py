@@ -4,6 +4,8 @@ The OCR engine is chosen by ``Settings.ocr_engine`` (manual escalation):
 
 * ``easyocr`` / ``tesseract`` / ``none`` -> docling (:class:`DoclingBookLoader`)
 * ``vlm`` -> DeepSeek-OCR via a vLLM vision endpoint (:class:`VlmOcrLoader`)
+* ``deepseek2`` -> DeepSeek-OCR-2 in-process via transformers
+  (:class:`DeepSeekOcr2Loader`)
 
 Use :func:`make_loader` to build the right one from settings; call ``.load()``
 to get the extracted markdown.
@@ -13,6 +15,8 @@ from __future__ import annotations
 
 import base64
 import io
+import os
+import tempfile
 import time
 
 # easyocr code -> tesseract code
@@ -178,7 +182,101 @@ class VlmOcrLoader:
         return "\n\n".join(pages_md)
 
 
-def make_loader(settings, file_path: str) -> DoclingBookLoader | VlmOcrLoader:
+class DeepSeekOcr2Loader:
+    """OCR a PDF with DeepSeek-OCR-2 loaded **in-process** via transformers.
+
+    No server: the model (DeepEncoder V2) runs locally with
+    ``trust_remote_code``. Each page is rasterised to a temp PNG and fed to the
+    model's ``infer`` method, which returns markdown.
+
+    Needs a CUDA GPU and the model weights (downloaded once, cached by HF).
+    ``attn_impl="eager"`` runs anywhere; ``"flash_attention_2"`` is faster but
+    needs ``flash-attn`` installed.
+
+    Note: the model card pins ``transformers==4.46.3``; this project holds
+    ``4.52.4`` (docling needs ~4.5x). The remote code usually works across that
+    range — validate end-to-end on your GPU and pin transformers if it breaks.
+    """
+
+    def __init__(
+        self,
+        file_path: str,
+        *,
+        model: str,
+        prompt: str,
+        base_size: int = 1024,
+        image_size: int = 768,
+        crop_mode: bool = True,
+        attn_impl: str = "eager",
+        dpi: int = 144,
+    ) -> None:
+        self.file_path = file_path
+        self.model = model
+        self.prompt = prompt
+        self.base_size = base_size
+        self.image_size = image_size
+        self.crop_mode = crop_mode
+        self.attn_impl = attn_impl
+        self.dpi = dpi
+
+    def _render_pages_to(self, out_dir: str) -> list[str]:
+        import pypdfium2 as pdfium  # docling dependency, already installed
+
+        paths: list[str] = []
+        pdf = pdfium.PdfDocument(self.file_path)
+        try:
+            for i, page in enumerate(pdf):
+                bitmap = page.render(scale=self.dpi / 72.0)
+                pil_image = bitmap.to_pil()
+                path = os.path.join(out_dir, f"page_{i:04d}.png")
+                pil_image.save(path, format="PNG")
+                paths.append(path)
+        finally:
+            pdf.close()
+        return paths
+
+    def load(self) -> str:
+        """Return the OCR'd document as markdown (pages joined)."""
+        import torch
+        from transformers import AutoModel, AutoTokenizer
+
+        print(f"\n📚 Processing book: {self.file_path} (ocr=deepseek2:{self.model})")
+        tokenizer = AutoTokenizer.from_pretrained(self.model, trust_remote_code=True)
+        model = AutoModel.from_pretrained(
+            self.model,
+            _attn_implementation=self.attn_impl,
+            trust_remote_code=True,
+            use_safetensors=True,
+        )
+        model = model.eval().cuda().to(torch.bfloat16)
+
+        start = time.time()
+        pages_md: list[str] = []
+        with tempfile.TemporaryDirectory() as tmp:
+            page_paths = self._render_pages_to(tmp)
+            for idx, path in enumerate(page_paths, 1):
+                res = model.infer(
+                    tokenizer,
+                    prompt=self.prompt,
+                    image_file=path,
+                    output_path=tmp,
+                    base_size=self.base_size,
+                    image_size=self.image_size,
+                    crop_mode=self.crop_mode,
+                    save_results=False,
+                )
+                pages_md.append(res if isinstance(res, str) else str(res))
+                print(f"  page {idx} ✓", end="\r")
+
+        elapsed = time.time() - start
+        print(f"\n✅ Book processed in {elapsed:.2f}s ({len(pages_md)} pages)")
+
+        return "\n\n".join(pages_md)
+
+
+def make_loader(
+    settings, file_path: str
+) -> DoclingBookLoader | VlmOcrLoader | DeepSeekOcr2Loader:
     """Build the OCR loader for a PDF, per ``settings.ocr_engine``."""
     if settings.ocr_engine == "vlm":
         return VlmOcrLoader(
@@ -189,6 +287,17 @@ def make_loader(settings, file_path: str) -> DoclingBookLoader | VlmOcrLoader:
             prompt=settings.vlm_ocr_prompt,
             max_tokens=settings.vlm_ocr_max_tokens,
             dpi=settings.vlm_ocr_dpi,
+        )
+    if settings.ocr_engine == "deepseek2":
+        return DeepSeekOcr2Loader(
+            file_path,
+            model=settings.ds2_model,
+            prompt=settings.ds2_prompt,
+            base_size=settings.ds2_base_size,
+            image_size=settings.ds2_image_size,
+            crop_mode=settings.ds2_crop_mode,
+            attn_impl=settings.ds2_attn_impl,
+            dpi=settings.ds2_dpi,
         )
     return DoclingBookLoader(
         file_path,

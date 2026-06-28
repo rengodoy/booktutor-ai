@@ -1,5 +1,6 @@
 from booktutor.config import Settings
 from booktutor.loaders import (
+    DeepSeekOcr2Loader,
     DoclingBookLoader,
     VlmOcrLoader,
     make_loader,
@@ -38,6 +39,19 @@ def test_make_loader_vlm():
     assert loader.api_base == "http://vllm:8000/v1"
     assert loader.model == "unsloth/DeepSeek-OCR"
     assert loader.prompt == "Free OCR."
+
+
+def test_make_loader_deepseek2():
+    loader = make_loader(
+        _settings(ocr_engine="deepseek2", ds2_image_size=640),
+        "book.pdf",
+    )
+    assert isinstance(loader, DeepSeekOcr2Loader)
+    assert loader.model == "deepseek-ai/DeepSeek-OCR-2"
+    assert loader.image_size == 640
+    assert loader.crop_mode is True
+    assert loader.attn_impl == "eager"
+    assert "<|grounding|>" in loader.prompt
 
 
 def test_tesseract_lang_mapping():

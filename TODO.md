@@ -21,13 +21,15 @@
 - [ ] (opcional) subir os floors `>=` no `pyproject.toml` pros novos resolvidos
 
 ### 2b. DeepSeek-OCR 2
-- [ ] Trocar o modelo para `unsloth/DeepSeek-OCR-2` (DeepEncoder V2)
-- [ ] Prompt de documento: `<|grounding|>Convert the document to markdown.`
-- [ ] Params recomendados: temp 0.0, max_tokens 8192, base_size 1024,
-      image_size 768, crop_mode on
-- [ ] **Bloqueio:** vLLM CUDA ainda não suporta `DeepseekOCR2ForCausalLM`
-      (crash em 0.20–0.23; vLLM issue #41468; `vllm-ascend` é só NPU).
-      Decidir serving: vLLM pinado/do source · SGLang · transformers in-process
+- [x] Serving decidido: **transformers in-process** (`OCR_ENGINE=deepseek2`)
+      — vLLM CUDA não suporta `DeepseekOCR2ForCausalLM` (issue #41468)
+- [x] `DeepSeekOcr2Loader` (trust_remote_code), modelo configurável
+      (default `deepseek-ai/DeepSeek-OCR-2`; alt `unsloth/DeepSeek-OCR-2`)
+- [x] Prompt grounding + params (base_size 1024, image_size 768, crop_mode,
+      attn_impl `eager` por padrão → roda sem flash-attn)
+- [x] Deps: `transformers`, `einops`, `addict`, `easydict` (flash-attn opcional)
+- [ ] **Validar end-to-end numa GPU** (download do modelo ~vários GB; conferir
+      compat transformers 4.52 vs 4.46.3 do model card)
 
 ### 2c. Merge multi-engine via Vision-LLM
 - [ ] Avaliar otimizar o OCR com um Vision-LLM (ex: Qwen3-VL) que reconcilia a saída

@@ -11,6 +11,12 @@ dependencies = [
     "pydantic-settings>=2.5.0",
     "tesserocr>=2.8.0",
     "torch>=2.7.1",
+    # DeepSeek-OCR-2 in-process (OCR_ENGINE=deepseek2) remote-code deps.
+    # flash-attn is optional (set DS2_ATTN_IMPL=flash_attention_2 if installed).
+    "transformers>=4.46.3",
+    "einops>=0.8.0",
+    "addict>=2.4.0",
+    "easydict>=1.13",
 ]
 
 [project.scripts]
