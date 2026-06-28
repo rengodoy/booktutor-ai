@@ -72,8 +72,10 @@ Verificação: screenshots headless (run_test + save_screenshot → SVG → PNG 
 - [x] 3a: esqueleto — app + 2 temas (Midnight/Ember, toggle `t`) + frame (header
       custom, sidebar PIPELINE, footer bilíngue) + ContentSwitcher + Dashboard
       (mock: DOCUMENTS/ENGINES/ACTIVITY/stats). Validado por screenshot.
-- [ ] 3b: demais telas fiéis com mock — Input, Engines, Process, Compare,
-      Markdown, Export (Layout B do dashboard opcional).
+- [x] 3b: demais telas fiéis com mock — Input (DirectoryTree), Engines (cards
+      2×2 + switches + strategy), Process (barras + log), Compare (3 colunas +
+      merge), Markdown (tabs + source/rendered), Export (radioset/switches/CTA).
+      Validadas por screenshot; nav (ListView) troca a view. Layout B: pendente/opcional.
 - [ ] 3c: ligar ao OCR real (Input escolhe PDFs, Engines→Settings, Process roda
       extração com progresso ao vivo via workers, Markdown preview, Export grava).
 
