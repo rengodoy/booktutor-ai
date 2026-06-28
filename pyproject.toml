@@ -29,6 +29,17 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/booktutor"]
 
+[tool.uv]
+# Conservative upgrades: hold the GPU/ML stack at the known-good versions.
+# torch 2.11 / transformers 5 break docling 2.36 and cause a torch/torchvision
+# CUDA wheel mismatch (cu128 vs cu130). Everything else is free to upgrade.
+constraint-dependencies = [
+    "torch==2.7.1",
+    "torchvision==0.22.1",
+    "transformers==4.52.4",
+    "docling==2.36.1",
+]
+
 [[tool.uv.index]]
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"

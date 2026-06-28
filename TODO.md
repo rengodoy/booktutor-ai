@@ -13,10 +13,25 @@
 - [x] Focar execução em Docker (não na máquina host), para rodar em qualquer ambiente
 
 ## 2. Qualidade do OCR
+
+### 2a. Atualizar dependências
+- [x] `uv lock --upgrade` + `uv sync`; rodar `pytest` e `ruff check`
+      (conservador: segura torch/torchvision/transformers/docling via
+      `[tool.uv] constraint-dependencies`; resto atualizado)
+- [ ] (opcional) subir os floors `>=` no `pyproject.toml` pros novos resolvidos
+
+### 2b. DeepSeek-OCR 2
+- [ ] Trocar o modelo para `unsloth/DeepSeek-OCR-2` (DeepEncoder V2)
+- [ ] Prompt de documento: `<|grounding|>Convert the document to markdown.`
+- [ ] Params recomendados: temp 0.0, max_tokens 8192, base_size 1024,
+      image_size 768, crop_mode on
+- [ ] **Bloqueio:** vLLM CUDA ainda não suporta `DeepseekOCR2ForCausalLM`
+      (crash em 0.20–0.23; vLLM issue #41468; `vllm-ascend` é só NPU).
+      Decidir serving: vLLM pinado/do source · SGLang · transformers in-process
+
+### 2c. Merge multi-engine via Vision-LLM
 - [ ] Avaliar otimizar o OCR com um Vision-LLM (ex: Qwen3-VL) que reconcilia a saída
       de múltiplas engines e monta o melhor Markdown possível
-- [ ] Usar DeepSeek-OCR v2
-- [ ] Atualizar todos os pacotes usados.
 
 ## 3. TUI (glyph)
 - [ ] Implementar a TUI descrita em `design_handoff_glyph_tui/README.md` usando Textual
