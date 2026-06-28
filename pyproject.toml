@@ -5,18 +5,36 @@ description = "OCR any PDF into high-quality Markdown (docling / DeepSeek-OCR)."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    # easyocr + tesserocr OCR backends are optional extras since docling 2.10x.
+    "pydantic-settings>=2.5.0",
+]
+
+# OCR engines split into mutually-exclusive extras: docling needs transformers
+# 5 (rt_detr_v2 layout model) while DeepSeek-OCR-2's remote code needs
+# transformers <4.48 (LlamaFlashAttention2). They cannot share one venv, so each
+# ships in its own image (see Dockerfile / Dockerfile.deepseek2). The conflict is
+# declared under [tool.uv] so a single lockfile keeps both resolutions.
+[project.optional-dependencies]
+# easyocr/tesseract engines + vlm (DeepSeek-OCR v1 over an OpenAI-compatible
+# vision endpoint). easyocr + tesserocr backends are docling extras since 2.10x.
+docling = [
     "docling[easyocr,tesserocr]>=2.107.0",
     "huggingface-hub[hf-xet]>=0.32.3",
     "openai>=1.30.0",
-    "pydantic-settings>=2.5.0",
     "torch>=2.7.1",
-    # DeepSeek-OCR-2 in-process (OCR_ENGINE=deepseek2) remote-code deps.
-    # flash-attn is optional (set DS2_ATTN_IMPL=flash_attention_2 if installed).
-    "transformers>=4.46.3",
+]
+# DeepSeek-OCR-2 in-process via transformers (trust_remote_code). No docling.
+# flash-attn is optional (set DS2_ATTN_IMPL=flash_attention_2 if installed).
+deepseek2 = [
+    "torch>=2.7.1",
+    "torchvision>=0.22.1",
+    "transformers>=4.46.3,<4.48",
+    "huggingface-hub[hf-xet]>=0.32.3",
     "einops>=0.8.0",
     "addict>=2.4.0",
     "easydict>=1.13",
+    "matplotlib>=3.8.0",
+    "pypdfium2>=4.30",
+    "pillow>=10.0",
 ]
 
 [project.scripts]
@@ -36,9 +54,14 @@ build-backend = "hatchling.build"
 packages = ["src/booktutor"]
 
 [tool.uv]
+# docling and deepseek2 pull incompatible transformers majors; mark them as
+# conflicting so uv resolves each branch separately into one lockfile.
+conflicts = [
+    [{ extra = "docling" }, { extra = "deepseek2" }],
+]
 # Hold only the GPU pair at a CUDA-consistent (cu128) version: a blind torch
 # bump pulls a torchvision built against cu130 -> "compiled with different CUDA
-# major versions" at import. docling/transformers are free to upgrade.
+# major versions" at import.
 constraint-dependencies = [
     "torch==2.7.1",
     "torchvision==0.22.1",

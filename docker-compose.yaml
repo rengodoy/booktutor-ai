@@ -30,6 +30,37 @@ services:
     command: ["--help"]
 
   # ----------------------------------------------------------------------------
+  # DeepSeek-OCR-2 in-process (OCR_ENGINE=deepseek2). Its own image because the
+  # model's remote code needs transformers <4.48, which conflicts with docling.
+  # Needs a CUDA GPU. Started only with the "deepseek2" profile:
+  #   docker compose --profile deepseek2 run --rm deepseek2 extract books/livro.pdf
+  # In .env set: OCR_ENGINE=deepseek2
+  # ----------------------------------------------------------------------------
+  deepseek2:
+    build:
+      context: .
+      dockerfile: Dockerfile.deepseek2
+    image: rengodoy/booktutor-deepseek2:latest
+    container_name: booktutor-deepseek2
+    profiles: ["deepseek2"]
+    env_file:
+      - .env
+    volumes:
+      - ./books:/app/books
+      - ./pdf:/app/pdf
+      - hf-cache:/home/ubuntu/.cache/huggingface  # model cache (DeepSeek-OCR-2)
+    stdin_open: true
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: ["--help"]
+
+  # ----------------------------------------------------------------------------
   # DeepSeek-OCR served by vLLM (OpenAI-compatible vision endpoint), used when
   # OCR_ENGINE=vlm. Started only with the "vlm" profile:
   #   docker compose --profile vlm up -d deepseek-ocr

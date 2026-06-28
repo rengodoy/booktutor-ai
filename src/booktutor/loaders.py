@@ -14,6 +14,7 @@ to get the extracted markdown.
 from __future__ import annotations
 
 import base64
+import contextlib
 import io
 import os
 import tempfile
@@ -193,11 +194,11 @@ class DeepSeekOcr2Loader:
     ``attn_impl="eager"`` runs anywhere; ``"flash_attention_2"`` is faster but
     needs ``flash-attn`` installed.
 
-    Note: the model card pins ``transformers==4.46.3``; this project resolves
-    ``transformers 5.x`` (required by docling 2.10x). The remote code may not
-    load on transformers 5 — validate end-to-end on your GPU; if it breaks, run
-    ``deepseek2`` in a dedicated env pinned to ``transformers==4.46.3`` (or use
-    the ``unsloth/DeepSeek-OCR-2`` variant, which tends to track newer releases).
+    The remote code needs ``transformers <4.48`` (``LlamaFlashAttention2``),
+    which conflicts with docling 2.10x (transformers 5). This engine therefore
+    ships in its own ``booktutor[deepseek2]`` extra / image, never the docling
+    one. ``infer`` streams to stdout and writes the cleaned markdown to
+    ``<output_path>/result.mmd``; we read that.
     """
 
     def __init__(
@@ -257,17 +258,27 @@ class DeepSeekOcr2Loader:
         with tempfile.TemporaryDirectory() as tmp:
             page_paths = self._render_pages_to(tmp)
             for idx, path in enumerate(page_paths, 1):
-                res = model.infer(
-                    tokenizer,
-                    prompt=self.prompt,
-                    image_file=path,
-                    output_path=tmp,
-                    base_size=self.base_size,
-                    image_size=self.image_size,
-                    crop_mode=self.crop_mode,
-                    save_results=False,
-                )
-                pages_md.append(res if isinstance(res, str) else str(res))
+                # infer() streams to stdout and returns None; with save_results
+                # it writes the cleaned markdown to <out_dir>/result.mmd (strips
+                # grounding/box refs). Read that; silence the token streamer.
+                out_dir = os.path.join(tmp, f"out_{idx:04d}")
+                with contextlib.redirect_stdout(io.StringIO()):
+                    model.infer(
+                        tokenizer,
+                        prompt=self.prompt,
+                        image_file=path,
+                        output_path=out_dir,
+                        base_size=self.base_size,
+                        image_size=self.image_size,
+                        crop_mode=self.crop_mode,
+                        save_results=True,
+                    )
+                mmd_path = os.path.join(out_dir, "result.mmd")
+                page_md = ""
+                if os.path.exists(mmd_path):
+                    with open(mmd_path, encoding="utf-8") as fh:
+                        page_md = fh.read()
+                pages_md.append(page_md)
                 print(f"  page {idx} ✓", end="\r")
 
         elapsed = time.time() - start

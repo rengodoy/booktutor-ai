@@ -1,0 +1,30 @@
+# DeepSeek-OCR-2 in-process image (OCR_ENGINE=deepseek2).
+# Separate from the docling image because the model's remote code needs
+# transformers <4.48 (LlamaFlashAttention2) while docling 2.10x needs
+# transformers 5 (rt_detr_v2). They cannot share one venv, so each ships here
+# via its own uv extra. Needs a CUDA GPU at runtime.
+FROM ubuntu:noble
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates libgl1 libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- uv ----------------------------------------------------------------------
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_PYTHON=3.13 \
+    PATH="/app/.venv/bin:$PATH"
+
+WORKDIR /app
+
+# Install the deepseek2 extra first (better layer caching), then the project.
+COPY pyproject.toml uv.lock README.md .python-version ./
+RUN uv sync --frozen --no-install-project --no-dev --extra deepseek2
+
+COPY . .
+RUN uv sync --frozen --no-dev --extra deepseek2
+
+ENTRYPOINT ["booktutor"]
+CMD ["--help"]

@@ -8,4 +8,4 @@ environment variables / a ``.env`` file — see :class:`booktutor.config.Setting
 from booktutor.config import Settings
 
 __all__ = ["Settings"]
-__version__ = "0.3.0"
+__version__ = "0.4.0"

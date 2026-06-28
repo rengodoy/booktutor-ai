@@ -32,9 +32,12 @@
 - [x] Prompt grounding + params (base_size 1024, image_size 768, crop_mode,
       attn_impl `eager` por padrão → roda sem flash-attn)
 - [x] Deps: `transformers`, `einops`, `addict`, `easydict` (flash-attn opcional)
-- [ ] **Validar end-to-end numa GPU** (download do modelo ~vários GB; risco:
-      remote-code do OCR-2 pede transformers 4.46.3 e agora resolvemos 5.x por
-      causa do docling — se quebrar, rodar deepseek2 em env separado pinado)
+- [x] **Validado end-to-end na GPU**: OCR-2 conflita com docling no mesmo venv
+      (transformers <4.48 vs 5). Resolvido com extras mutuamente exclusivos
+      (`booktutor[docling]` vs `booktutor[deepseek2]` via `[tool.uv] conflicts`)
+      + imagem própria `Dockerfile.deepseek2` (serviço/profile `deepseek2`).
+      Rodou em transformers 4.47.1: páginas reais → markdown limpo (PT, headings).
+      Loader lê `result.mmd` (`save_results=True`).
 
 ### 2c. Merge multi-engine via Vision-LLM
 - [ ] Avaliar otimizar o OCR com um Vision-LLM (ex: Qwen3-VL) que reconcilia a saída
