@@ -36,4 +36,4 @@ COPY . .
 RUN uv sync --frozen --no-dev
 
 ENTRYPOINT ["booktutor"]
-CMD ["list"]
+CMD ["--help"]

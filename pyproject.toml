@@ -1,21 +1,14 @@
 [project]
 name = "booktutor-ai"
-version = "0.2.0"
-description = "Turn any PDF book into a RAG-powered AI tutor over any OpenAI-compatible LLM."
+version = "0.3.0"
+description = "OCR any PDF into high-quality Markdown (docling / DeepSeek-OCR)."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "docling>=2.34.0",
-    "faiss-cpu>=1.11.0",
     "huggingface-hub[hf-xet]>=0.32.3",
-    "langchain>=0.3.25",
-    "langchain-community>=0.3.21",
-    "langchain-core>=0.3.63",
-    "langchain-huggingface>=0.2.0",
-    "langchain-openai>=0.3.18",
-    "langchain-text-splitters>=0.3.8",
+    "openai>=1.30.0",
     "pydantic-settings>=2.5.0",
-    "sentence-transformers>=3.0.0",
     "tesserocr>=2.8.0",
     "torch>=2.7.1",
 ]

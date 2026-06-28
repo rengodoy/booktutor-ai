@@ -1,11 +1,12 @@
-"""Document loaders: source files -> LangChain ``Document`` objects.
+"""OCR loaders: a source PDF -> a markdown ``str``.
 
-OCR engine is chosen by ``Settings.ocr_engine`` (manual escalation):
+The OCR engine is chosen by ``Settings.ocr_engine`` (manual escalation):
 
 * ``easyocr`` / ``tesseract`` / ``none`` -> docling (:class:`DoclingBookLoader`)
 * ``vlm`` -> DeepSeek-OCR via a vLLM vision endpoint (:class:`VlmOcrLoader`)
 
-Use :func:`make_loader` to build the right one from settings.
+Use :func:`make_loader` to build the right one from settings; call ``.load()``
+to get the extracted markdown.
 """
 
 from __future__ import annotations
@@ -13,10 +14,6 @@ from __future__ import annotations
 import base64
 import io
 import time
-from collections.abc import Iterator
-
-from langchain_core.document_loaders import BaseLoader
-from langchain_core.documents import Document as LCDocument
 
 # easyocr code -> tesseract code
 _TESSERACT_LANG = {
@@ -29,8 +26,8 @@ _TESSERACT_LANG = {
 }
 
 
-class DoclingBookLoader(BaseLoader):
-    """Load a PDF as a single markdown ``Document`` using docling + OCR."""
+class DoclingBookLoader:
+    """OCR a PDF into a single markdown string using docling."""
 
     def __init__(
         self,
@@ -72,9 +69,7 @@ class DoclingBookLoader(BaseLoader):
             # force_full_page_ocr re-OCRs the whole page, ignoring a broken /
             # garbled embedded text layer (common in older scanned books).
             if self.ocr_engine == "tesseract":
-                langs = [
-                    _TESSERACT_LANG.get(code, code) for code in self.ocr_languages
-                ]
+                langs = [_TESSERACT_LANG.get(code, code) for code in self.ocr_languages]
                 pipeline_options.ocr_options = TesseractOcrOptions(
                     lang=langs, force_full_page_ocr=self.force_full_page_ocr
                 )
@@ -90,7 +85,8 @@ class DoclingBookLoader(BaseLoader):
             }
         )
 
-    def lazy_load(self) -> Iterator[LCDocument]:
+    def load(self) -> str:
+        """Return the OCR'd document as markdown."""
         print(f"\n📚 Processing book: {self.file_path} (ocr={self.ocr_engine})")
         converter = self._build_converter()
 
@@ -99,14 +95,10 @@ class DoclingBookLoader(BaseLoader):
         elapsed = time.time() - start
         print(f"✅ Book processed in {elapsed:.2f}s")
 
-        text = docling_doc.export_to_markdown()
-        yield LCDocument(
-            page_content=text,
-            metadata={"source": self.file_path, "format": "book", "ocr": self.ocr_engine},
-        )
+        return docling_doc.export_to_markdown()
 
 
-class VlmOcrLoader(BaseLoader):
+class VlmOcrLoader:
     """OCR a PDF with DeepSeek-OCR served by a vLLM OpenAI-compatible endpoint.
 
     Each page is rasterised and sent to the vision model, which returns markdown.
@@ -132,7 +124,7 @@ class VlmOcrLoader(BaseLoader):
         self.max_tokens = max_tokens
         self.dpi = dpi
 
-    def _render_pages(self) -> Iterator[bytes]:
+    def _render_pages(self):
         import pypdfium2 as pdfium  # docling dependency, already installed
 
         pdf = pdfium.PdfDocument(self.file_path)
@@ -146,8 +138,9 @@ class VlmOcrLoader(BaseLoader):
         finally:
             pdf.close()
 
-    def lazy_load(self) -> Iterator[LCDocument]:
-        from openai import OpenAI  # bundled via langchain-openai
+    def load(self) -> str:
+        """Return the OCR'd document as markdown (pages joined)."""
+        from openai import OpenAI
 
         print(
             f"\n📚 Processing book: {self.file_path} "
@@ -182,47 +175,11 @@ class VlmOcrLoader(BaseLoader):
         elapsed = time.time() - start
         print(f"\n✅ Book processed in {elapsed:.2f}s ({len(pages_md)} pages)")
 
-        text = "\n\n".join(pages_md)
-        yield LCDocument(
-            page_content=text,
-            metadata={"source": self.file_path, "format": "book", "ocr": "vlm"},
-        )
+        return "\n\n".join(pages_md)
 
 
-class MarkdownFileLoader(BaseLoader):
-    """Load a pre-extracted markdown/text file as one ``Document`` (no OCR).
-
-    Lets a human review/fix the extracted text and feed *that* into the RAG
-    instead of re-running OCR.
-    """
-
-    def __init__(self, file_path: str) -> None:
-        self.file_path = file_path
-
-    def lazy_load(self) -> Iterator[LCDocument]:
-        with open(self.file_path, encoding="utf-8") as fh:
-            text = fh.read()
-        print(f"\n📄 Loading reviewed text: {self.file_path}")
-        yield LCDocument(
-            page_content=text,
-            metadata={"source": self.file_path, "format": "markdown"},
-        )
-
-
-# File extensions treated as already-extracted text (skip OCR).
-TEXT_SUFFIXES = {".md", ".markdown", ".txt"}
-
-
-def make_loader(settings, file_path: str) -> BaseLoader:
-    """Build the loader for a source file.
-
-    Markdown/text files are loaded as-is; PDFs go through the OCR engine
-    selected by ``settings.ocr_engine``.
-    """
-    from pathlib import Path
-
-    if Path(file_path).suffix.lower() in TEXT_SUFFIXES:
-        return MarkdownFileLoader(file_path)
+def make_loader(settings, file_path: str) -> DoclingBookLoader | VlmOcrLoader:
+    """Build the OCR loader for a PDF, per ``settings.ocr_engine``."""
     if settings.ocr_engine == "vlm":
         return VlmOcrLoader(
             file_path,
