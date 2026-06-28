@@ -20,7 +20,13 @@ from textual.widgets import (
     Static,
 )
 
+from booktutor.tui.screens.compare import CompareView
 from booktutor.tui.screens.dashboard import DashboardView
+from booktutor.tui.screens.engines import EnginesView
+from booktutor.tui.screens.export import ExportView
+from booktutor.tui.screens.input import InputView
+from booktutor.tui.screens.markdown import MarkdownView
+from booktutor.tui.screens.process import ProcessView
 from booktutor.tui.themes import THEMES
 
 # (view id, sidebar label, header subtitle)
@@ -94,10 +100,12 @@ class GlyphApp(App):
                 )
             with ContentSwitcher(initial="dashboard", id="content"):
                 yield DashboardView(id="dashboard")
-                for key, lbl, _ in NAV[1:]:
-                    ph = Static(f"{lbl}\n\n(todo)", id=key, classes="placeholder")
-                    ph.border_title = lbl.upper()
-                    yield ph
+                yield InputView(id="input")
+                yield EnginesView(id="engines")
+                yield ProcessView(id="process")
+                yield CompareView(id="compare")
+                yield MarkdownView(id="markdown")
+                yield ExportView(id="export")
         yield Footer()
 
     def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:

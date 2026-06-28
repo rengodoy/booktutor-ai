@@ -126,3 +126,79 @@ DataTable > .datatable--header {
     content-align: center middle;
     height: 1fr;
 }
+
+/* accent-bordered panel variant */
+.panel.accent { border: round $accent; }
+
+/* --- Input --------------------------------------------------------------- */
+#browse { width: 1fr; }
+#browse #crumb { height: 1; color: $text-dim; }
+#browse DirectoryTree { background: transparent; height: 1fr; }
+#browse #browse-foot { height: 1; color: $text-faint; }
+#input-right { width: 42; }
+#selected { height: 1fr; }
+#detected { height: 7; }
+#thumb { height: 8; }
+#thumb-img {
+    height: 1fr;
+    background: $panel;
+}
+
+/* --- Engines ------------------------------------------------------------- */
+#engine-grid {
+    grid-size: 2 2;
+    grid-gutter: 1;
+    grid-rows: auto auto;
+    height: auto;
+}
+.engine-card {
+    height: auto;
+    border: round $glyph-border;
+    border-title-color: $text-bright;
+    border-title-align: left;
+    background: $surface;
+    padding: 0 1;
+}
+.engine-card.glow { border: round $accent; }
+.engine-card Switch { background: transparent; }
+.engine-card .params { color: $text-dim; }
+#strategy { height: 6; }
+
+/* --- Process ------------------------------------------------------------- */
+#overall { height: 6; }
+#overall #overall-bar { width: 1fr; }
+#parallel { height: 1fr; }
+.eng-row { height: 1; }
+.eng-name { width: 16; color: $text-bright; }
+.eng-row ProgressBar { width: 1fr; }
+.eng-status { width: 12; text-align: right; }
+#proc-log { height: 9; }
+#proc-log RichLog { background: transparent; }
+
+/* --- Compare ------------------------------------------------------------- */
+#compare-head { height: 1; }
+#compare-cols { height: 1fr; }
+.cmp-col { width: 1fr; }
+.cmp-conf { color: $text-dim; }
+.cmp-text { padding: 1 0; }
+#merged { height: 10; }
+#merged-body { width: 1fr; padding: 0 1; }
+#conf-box { width: 30; }
+
+/* --- Markdown ------------------------------------------------------------ */
+#md-stats { height: 1; }
+#md-split { height: 1fr; }
+#md-source { width: 1fr; }
+#md-rendered { width: 1fr; }
+#md-rendered Markdown { background: transparent; }
+
+/* --- Export -------------------------------------------------------------- */
+#export-output { height: 6; }
+#export-mid { grid-size: 2 1; grid-gutter: 1; height: 1fr; }
+#export-bottom { grid-size: 2 1; grid-gutter: 1; height: 8; }
+#export-cta { width: 36; content-align: center middle; }
+#export-cta Button { width: 1fr; }
+.opt-row { height: 1; }
+.opt-row Switch { background: transparent; }
+.opt-label { padding: 0 1; color: $text-bright; }
+#export-summary { width: 1fr; }
