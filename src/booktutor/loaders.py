@@ -6,6 +6,8 @@ The OCR engine is chosen by ``Settings.ocr_engine`` (manual escalation):
 * ``vlm`` -> DeepSeek-OCR via a vLLM vision endpoint (:class:`VlmOcrLoader`)
 * ``deepseek2`` -> DeepSeek-OCR-2 in-process via transformers
   (:class:`DeepSeekOcr2Loader`)
+* ``merge`` -> adaptive multi-engine OCR reconciled by a Vision-LLM
+  (:class:`MergeOcrLoader`)
 
 Use :func:`make_loader` to build the right one from settings; call ``.load()``
 to get the extracted markdown.
@@ -31,6 +33,59 @@ _TESSERACT_LANG = {
 }
 
 
+def make_docling_converter(
+    ocr_engine: str,
+    *,
+    ocr_languages: list[str] | None = None,
+    force_full_page_ocr: bool = False,
+    num_threads: int = 8,
+):
+    """Build a docling ``DocumentConverter`` for an OCR engine.
+
+    ``ocr_engine`` is ``easyocr`` | ``tesseract`` | ``none``. Shared by the
+    single-engine loader and the adaptive merge loader.
+    """
+    # Imported lazily: docling pulls in heavy ML deps (torch).
+    from docling.datamodel.base_models import InputFormat
+    from docling.datamodel.pipeline_options import (
+        AcceleratorDevice,
+        AcceleratorOptions,
+        EasyOcrOptions,
+        PdfPipelineOptions,
+        TesseractOcrOptions,
+    )
+    from docling.document_converter import DocumentConverter, PdfFormatOption
+
+    languages = ocr_languages or ["en"]
+    pipeline_options = PdfPipelineOptions()
+    pipeline_options.accelerator_options = AcceleratorOptions(
+        num_threads=num_threads, device=AcceleratorDevice.AUTO
+    )
+    pipeline_options.do_table_structure = True
+    pipeline_options.table_structure_options.do_cell_matching = True
+
+    do_ocr = ocr_engine != "none"
+    pipeline_options.do_ocr = do_ocr
+    if do_ocr:
+        # force_full_page_ocr re-OCRs the whole page, ignoring a broken /
+        # garbled embedded text layer (common in older scanned books).
+        if ocr_engine == "tesseract":
+            langs = [_TESSERACT_LANG.get(code, code) for code in languages]
+            pipeline_options.ocr_options = TesseractOcrOptions(
+                lang=langs, force_full_page_ocr=force_full_page_ocr
+            )
+        else:  # easyocr
+            pipeline_options.ocr_options = EasyOcrOptions(
+                lang=languages, force_full_page_ocr=force_full_page_ocr
+            )
+
+    return DocumentConverter(
+        format_options={
+            InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options),
+        }
+    )
+
+
 class DoclingBookLoader:
     """OCR a PDF into a single markdown string using docling."""
 
@@ -50,44 +105,11 @@ class DoclingBookLoader:
         self.num_threads = num_threads
 
     def _build_converter(self):
-        # Imported lazily: docling pulls in heavy ML deps (torch).
-        from docling.datamodel.base_models import InputFormat
-        from docling.datamodel.pipeline_options import (
-            AcceleratorDevice,
-            AcceleratorOptions,
-            EasyOcrOptions,
-            PdfPipelineOptions,
-            TesseractOcrOptions,
-        )
-        from docling.document_converter import DocumentConverter, PdfFormatOption
-
-        pipeline_options = PdfPipelineOptions()
-        pipeline_options.accelerator_options = AcceleratorOptions(
-            num_threads=self.num_threads, device=AcceleratorDevice.AUTO
-        )
-        pipeline_options.do_table_structure = True
-        pipeline_options.table_structure_options.do_cell_matching = True
-
-        do_ocr = self.ocr_engine != "none"
-        pipeline_options.do_ocr = do_ocr
-        if do_ocr:
-            # force_full_page_ocr re-OCRs the whole page, ignoring a broken /
-            # garbled embedded text layer (common in older scanned books).
-            if self.ocr_engine == "tesseract":
-                langs = [_TESSERACT_LANG.get(code, code) for code in self.ocr_languages]
-                pipeline_options.ocr_options = TesseractOcrOptions(
-                    lang=langs, force_full_page_ocr=self.force_full_page_ocr
-                )
-            else:  # easyocr
-                pipeline_options.ocr_options = EasyOcrOptions(
-                    lang=self.ocr_languages,
-                    force_full_page_ocr=self.force_full_page_ocr,
-                )
-
-        return DocumentConverter(
-            format_options={
-                InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options),
-            }
+        return make_docling_converter(
+            self.ocr_engine,
+            ocr_languages=self.ocr_languages,
+            force_full_page_ocr=self.force_full_page_ocr,
+            num_threads=self.num_threads,
         )
 
     def load(self) -> str:
@@ -287,10 +309,211 @@ class DeepSeekOcr2Loader:
         return "\n\n".join(pages_md)
 
 
+def _parse_reconcile(content: str) -> tuple[float, str]:
+    """Parse the reconciler's JSON reply into ``(confidence, markdown)``.
+
+    Defensive: strips ``` fences and falls back to the first ``{...}`` block.
+    """
+    import json
+    import re
+
+    text = content.strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```[a-zA-Z]*\n?", "", text)
+        text = re.sub(r"\n?```$", "", text).strip()
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if not match:
+            return 0.0, content
+        try:
+            data = json.loads(match.group(0))
+        except json.JSONDecodeError:
+            return 0.0, content
+    try:
+        confidence = float(data.get("confidence", 0.0))
+    except (TypeError, ValueError):
+        confidence = 0.0
+    return confidence, str(data.get("markdown", ""))
+
+
+_MERGE_SYSTEM = (
+    "You reconcile OCR output into faithful Markdown. You are given a page image "
+    "and one or more candidate OCR transcriptions from different engines. Using "
+    "the IMAGE as ground truth, produce the most accurate, complete Markdown for "
+    "the page: preserve headings, lists and tables, fix OCR errors, and keep the "
+    "original language. Then rate your confidence from 0.0 to 1.0 that the result "
+    "faithfully matches the page; if the candidates are poor and the image is "
+    "hard to read alone, give a lower confidence so more engines are tried. "
+    'Respond ONLY with a JSON object: {"confidence": <float>, "markdown": <string>}.'
+)
+
+
+class MergeOcrLoader:
+    """Adaptive multi-engine OCR reconciled by a Vision-LLM.
+
+    For each page, escalate through configured ``tiers`` of source engines
+    (e.g. ``[["easyocr"], ["tesseract"], ["easyocr", "tesseract"]]``). A vision
+    model reads the page image plus the candidate transcriptions, judges quality
+    and returns the best Markdown. Escalation stops once confidence reaches
+    ``min_confidence`` (or the tiers run out). Per-page engine output is cached so
+    escalating never re-runs an engine.
+
+    Runs in the docling image (docling engines + an OpenAI-compatible vision
+    endpoint). The ``deepseek2`` tier needs that engine exposed as a service
+    (separate image) — see Dockerfile.deepseek2 / TODO 2c-2.
+    """
+
+    def __init__(
+        self,
+        file_path: str,
+        *,
+        tiers: list[list[str]],
+        languages: list[str] | None = None,
+        force_full_page_ocr: bool = False,
+        num_threads: int = 8,
+        api_base: str,
+        api_key: str,
+        model: str,
+        max_tokens: int = 8192,
+        dpi: int = 144,
+        min_confidence: float = 0.85,
+    ) -> None:
+        self.file_path = file_path
+        self.tiers = tiers
+        self.languages = languages or ["en"]
+        self.force_full_page_ocr = force_full_page_ocr
+        self.num_threads = num_threads
+        self.api_base = api_base
+        self.api_key = api_key
+        self.model = model
+        self.max_tokens = max_tokens
+        self.dpi = dpi
+        self.min_confidence = min_confidence
+
+    def _converter_for(self, engine: str, cache: dict):
+        if engine not in cache:
+            cache[engine] = make_docling_converter(
+                engine,
+                ocr_languages=self.languages,
+                force_full_page_ocr=self.force_full_page_ocr,
+                num_threads=self.num_threads,
+            )
+        return cache[engine]
+
+    def _ocr_page(self, converter, page_no: int) -> str:
+        # page_range is 1-indexed and inclusive.
+        result = converter.convert(self.file_path, page_range=(page_no, page_no))
+        return result.document.export_to_markdown()
+
+    def _reconcile(
+        self, client, png_b64: str, candidates: dict[str, str]
+    ) -> tuple[float, str]:
+        blocks = "\n\n".join(
+            f"### OCR engine: {eng}\n{txt}" for eng, txt in candidates.items()
+        )
+        user_text = (
+            "Candidate OCR transcriptions:\n\n"
+            f"{blocks}\n\n"
+            "Return the reconciled Markdown and your confidence as JSON."
+        )
+        resp = client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": _MERGE_SYSTEM},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": user_text},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/png;base64,{png_b64}"},
+                        },
+                    ],
+                },
+            ],
+            temperature=0.0,
+            max_tokens=self.max_tokens,
+        )
+        return _parse_reconcile(resp.choices[0].message.content or "")
+
+    def load(self) -> str:
+        """Return the reconciled document as markdown (pages joined)."""
+        import pypdfium2 as pdfium
+        from openai import OpenAI
+
+        print(
+            f"\n📚 Processing book: {self.file_path} "
+            f"(ocr=merge:{self.model}, tiers={self.tiers})"
+        )
+        client = OpenAI(base_url=self.api_base, api_key=self.api_key)
+        converters: dict = {}
+
+        start = time.time()
+        pages_md: list[str] = []
+        pdf = pdfium.PdfDocument(self.file_path)
+        try:
+            npages = len(pdf)
+            for idx in range(npages):
+                bitmap = pdf[idx].render(scale=self.dpi / 72.0)
+                buf = io.BytesIO()
+                bitmap.to_pil().save(buf, format="PNG")
+                png_b64 = base64.b64encode(buf.getvalue()).decode()
+
+                page_no = idx + 1
+                engine_text: dict[str, str] = {}
+                chosen_md = ""
+                used_tier: list[str] = []
+                for tier in self.tiers:
+                    for engine in tier:
+                        if engine not in engine_text:
+                            # A failed engine (e.g. tesseract with no tessdata)
+                            # becomes an empty candidate; the reconciler still has
+                            # the image and the other engines.
+                            try:
+                                converter = self._converter_for(engine, converters)
+                                engine_text[engine] = self._ocr_page(converter, page_no)
+                            except Exception as exc:  # noqa: BLE001
+                                engine_text[engine] = ""
+                                print(f"\n  [engine {engine} failed: {exc}]")
+                    candidates = {eng: engine_text[eng] for eng in tier}
+                    confidence, chosen_md = self._reconcile(client, png_b64, candidates)
+                    used_tier = tier
+                    if confidence >= self.min_confidence:
+                        break
+                pages_md.append(chosen_md)
+                print(
+                    f"  page {page_no}/{npages} ✓ (tier={','.join(used_tier)})",
+                    end="\r",
+                )
+        finally:
+            pdf.close()
+
+        elapsed = time.time() - start
+        print(f"\n✅ Book processed in {elapsed:.2f}s ({len(pages_md)} pages)")
+
+        return "\n\n".join(pages_md)
+
+
 def make_loader(
     settings, file_path: str
-) -> DoclingBookLoader | VlmOcrLoader | DeepSeekOcr2Loader:
+) -> DoclingBookLoader | VlmOcrLoader | DeepSeekOcr2Loader | MergeOcrLoader:
     """Build the OCR loader for a PDF, per ``settings.ocr_engine``."""
+    if settings.ocr_engine == "merge":
+        return MergeOcrLoader(
+            file_path,
+            tiers=settings.merge_tier_list,
+            languages=settings.ocr_language_list,
+            force_full_page_ocr=settings.ocr_force_full_page,
+            num_threads=settings.ocr_num_threads,
+            api_base=settings.merge_api_base,
+            api_key=settings.merge_api_key,
+            model=settings.merge_model,
+            max_tokens=settings.merge_max_tokens,
+            dpi=settings.merge_dpi,
+            min_confidence=settings.merge_min_confidence,
+        )
     if settings.ocr_engine == "vlm":
         return VlmOcrLoader(
             file_path,

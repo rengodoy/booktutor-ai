@@ -39,9 +39,19 @@
       Rodou em transformers 4.47.1: páginas reais → markdown limpo (PT, headings).
       Loader lê `result.mmd` (`save_results=True`).
 
-### 2c. Merge multi-engine via Vision-LLM
-- [ ] Avaliar otimizar o OCR com um Vision-LLM (ex: Qwen3-VL) que reconcilia a saída
-      de múltiplas engines e monta o melhor Markdown possível
+### 2c. Merge multi-engine via Vision-LLM (escalonamento adaptativo)
+Ideia: por página, escalonar fontes até a qualidade ser boa; um Vision-LLM
+(ex: Qwen3-VL ~27B) avalia a qualidade e funde os pedaços. Ladder configurável:
+`easyocr` → `tesseract` → `easyocr+tesseract` → `+deepseek2`. O reconciliador
+sempre lê a imagem da página. `OCR_ENGINE=merge`. Endpoint reconciliador: a definir.
+- [x] 2c-1: framework de escalonamento + juiz/merger Vision-LLM (tiers
+      easyocr/tesseract), settings `MERGE_*`, ladder configurável, cache por
+      página×engine, engine que falha vira candidato vazio. **Validado** com
+      `qwen-27b` (llama-swap @127.0.0.1:8080): páginas reais → markdown PT limpo,
+      conf 0.95; o reconciliador faz OCR da imagem mesmo com candidato vazio.
+- [ ] 2c-2: expor deepseek2 como serviço HTTP de OCR (servidor no
+      `Dockerfile.deepseek2`) — sem isso o tier deepseek2 não entra (conflito venv).
+- [ ] 2c-3: adicionar o tier deepseek2 (via serviço) ao orquestrador + validar.
 
 ## 3. TUI (glyph)
 - [ ] Implementar a TUI descrita em `design_handoff_glyph_tui/README.md` usando Textual

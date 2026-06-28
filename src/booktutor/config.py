@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     #   "tesseract" -> docling + Tesseract           (Docker: lang packs installed)
     #   "vlm"       -> DeepSeek-OCR via vLLM         (Docker: best on bad scans)
     #   "deepseek2" -> DeepSeek-OCR-2 in-process     (transformers, needs CUDA GPU)
+    #   "merge"     -> adaptive multi-engine + Vision-LLM reconciler
     #   "none"      -> trust the PDF text layer      (no OCR)
     ocr_engine: str = Field(default="easyocr")
     # Comma-separated language codes (easyocr: "pt,en"; tesseract auto-mapped).
@@ -56,6 +57,28 @@ class Settings(BaseSettings):
     ds2_attn_impl: str = Field(default="eager")
     ds2_dpi: int = Field(default=144)
 
+    # --- Merge (adaptive multi-engine OCR reconciled by a Vision-LLM) -------
+    # Escalation ladder: ';'-separated tiers, each a ','-list of source engines
+    # (docling engines: easyocr, tesseract). Each page escalates to the next tier
+    # until the reconciler's confidence reaches merge_min_confidence (or the
+    # tiers run out). The reconciler always also reads the page image.
+    merge_tiers: str = Field(default="easyocr;tesseract;easyocr,tesseract")
+    merge_api_base: str = Field(default="http://127.0.0.1:8080/v1")
+    merge_api_key: str = Field(default="not-needed")
+    merge_model: str = Field(default="qwen-27b")
+    merge_max_tokens: int = Field(default=8192)
+    merge_dpi: int = Field(default=144)
+    merge_min_confidence: float = Field(default=0.85)
+
     @property
     def ocr_language_list(self) -> list[str]:
         return [lang.strip() for lang in self.ocr_languages.split(",") if lang.strip()]
+
+    @property
+    def merge_tier_list(self) -> list[list[str]]:
+        tiers: list[list[str]] = []
+        for tier in self.merge_tiers.split(";"):
+            engines = [e.strip() for e in tier.split(",") if e.strip()]
+            if engines:
+                tiers.append(engines)
+        return tiers

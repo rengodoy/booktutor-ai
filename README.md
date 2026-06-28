@@ -27,6 +27,7 @@ Pick the engine and **escalate manually** if the text comes out poor
 | `tesseract` | good, classic | **Docker** (lang packs installed) |
 | `vlm`       | best — DeepSeek-OCR reads the page image | **Docker** (vLLM service) |
 | `deepseek2` | best — DeepSeek-OCR-2 (DeepEncoder V2), in-process | local/Docker, **CUDA GPU** |
+| `merge`     | adaptive — escalates engines, a Vision-LLM reconciles | needs a vision endpoint |
 
 Set `OCR_FORCE_FULL_PAGE=true` to **ignore a garbled embedded text layer** and
 re-OCR from the page images — the single biggest fix for mojibake like
@@ -119,6 +120,27 @@ uv run --extra deepseek2 booktutor extract livro.pdf
 > ⚠️ vLLM doesn't yet serve DeepSeek-OCR-2 on CUDA (`DeepseekOCR2ForCausalLM`
 > not supported; vLLM issue #41468), which is why this path is in-process.
 > `flash-attn` is optional: the default `eager` works everywhere.
+
+### Merge (adaptive multi-engine + Vision-LLM reconciler)
+
+`OCR_ENGINE=merge` reconciles several OCR engines with a vision model. Per page
+it **escalates** through configured tiers of source engines; the reconciler reads
+the page image plus the candidate transcriptions, returns the best Markdown and a
+confidence, and escalation stops once confidence reaches `MERGE_MIN_CONFIDENCE`.
+Per-page engine output is cached, so escalating never re-runs an engine.
+
+```dotenv
+OCR_ENGINE=merge
+MERGE_TIERS=easyocr;tesseract;easyocr,tesseract   # ';'-tiers of ','-engines
+MERGE_API_BASE=http://127.0.0.1:8080/v1           # OpenAI-compatible vision endpoint
+MERGE_MODEL=qwen-27b                              # the reconciler/judge (vision)
+MERGE_MIN_CONFIDENCE=0.85
+```
+
+Runs in the docling image (docling engines + the vision endpoint). A strong
+vision reconciler does much of the OCR from the image itself, so even weak source
+candidates still yield good Markdown. Including `deepseek2` as a tier needs it
+exposed as a service (separate image) — see TODO 2c-2/2c-3.
 
 **GPU sizing.** DeepSeek-OCR is ~3B params — it fits comfortably in **16 GB**
 (e.g. an RTX 5080 or RTX 2000 Ada), single GPU, no tensor-parallel. With two
