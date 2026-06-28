@@ -3,15 +3,22 @@
 Canonical layout from the design handoff: a custom header bar, a left PIPELINE
 nav sidebar, a content area that swaps views, and a footer of key bindings.
 Two themes (Midnight default / Ember) toggle at runtime with ``t``.
+
+Wired to the real OCR pipeline: Input selects PDFs, Engines picks the engine,
+``r`` runs extraction in a worker thread (live progress on Process), the result
+shows on Markdown and ``e`` writes it from Export.
 """
 
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 
+from textual import work
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.widgets import (
+    Button,
     ContentSwitcher,
     Footer,
     Label,
@@ -20,6 +27,8 @@ from textual.widgets import (
     Static,
 )
 
+from booktutor.config import Settings
+from booktutor.loaders import make_loader
 from booktutor.tui.screens.compare import CompareView
 from booktutor.tui.screens.dashboard import DashboardView
 from booktutor.tui.screens.engines import EnginesView
@@ -40,6 +49,7 @@ NAV = [
     ("export", "Export · Exportar", "save output"),
 ]
 _SUBTITLE = {key: sub for key, _, sub in NAV}
+_INDEX = {key: i for i, (key, _, _) in enumerate(NAV)}
 
 
 class GlyphHeader(Horizontal):
@@ -51,7 +61,7 @@ class GlyphHeader(Horizontal):
         yield Static("pipeline overview", id="subtitle", classes="subtitle")
         yield Static("", classes="spacer")
         yield Static("LANG  PT · EN", classes="pill")
-        yield Static("● running", classes="status")
+        yield Static("● idle", id="run-status", classes="status")
         yield Static("--:--", id="clock", classes="clock")
 
     def on_mount(self) -> None:
@@ -67,6 +77,8 @@ class GlyphApp(App):
     TITLE = "glyph"
 
     BINDINGS = [
+        ("r", "run_ocr", "Run · Rodar"),
+        ("e", "export", "Export · Exportar"),
         ("t", "toggle_theme", "Theme · Tema"),
         ("l", "toggle_lang", "Lang"),
         ("question_mark", "help", "Help · Ajuda"),
@@ -80,6 +92,11 @@ class GlyphApp(App):
         for theme in THEMES:
             self.register_theme(theme)
         self.theme = "glyph-midnight"
+        # pipeline state
+        self.selected_paths: list[Path] = []
+        self.ocr_engine: str = "easyocr"
+        self.out_dir: str = "out/markdown"
+        self.results: dict[str, str] = {}
 
     def compose(self) -> ComposeResult:
         yield GlyphHeader(id="glyph-header")
@@ -108,6 +125,14 @@ class GlyphApp(App):
                 yield ExportView(id="export")
         yield Footer()
 
+    # --- navigation -------------------------------------------------------
+    def show_view(self, key: str) -> None:
+        self.query_one("#content", ContentSwitcher).current = key
+        self.query_one("#subtitle", Static).update(_SUBTITLE.get(key, ""))
+        nav = self.query_one("#nav-list", ListView)
+        if key in _INDEX and nav.index != _INDEX[key]:
+            nav.index = _INDEX[key]
+
     def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
         if event.item is None or event.item.id is None:
             return
@@ -115,6 +140,71 @@ class GlyphApp(App):
         self.query_one("#content", ContentSwitcher).current = key
         self.query_one("#subtitle", Static).update(_SUBTITLE.get(key, ""))
 
+    # --- pipeline state ---------------------------------------------------
+    def toggle_file(self, path: Path) -> None:
+        if path in self.selected_paths:
+            self.selected_paths.remove(path)
+        else:
+            self.selected_paths.append(path)
+
+    def set_engine(self, engine: str) -> None:
+        self.ocr_engine = engine
+
+    # --- run OCR ----------------------------------------------------------
+    def action_run_ocr(self) -> None:
+        if not self.selected_paths:
+            self.notify("Select one or more PDFs first (Input).", severity="warning")
+            self.show_view("input")
+            return
+        self.show_view("process")
+        self.query_one("#run-status", Static).update("● running")
+        self._ocr_worker()
+
+    @work(thread=True, exclusive=True)
+    def _ocr_worker(self) -> None:
+        settings = Settings().model_copy(update={"ocr_engine": self.ocr_engine})
+        paths = list(self.selected_paths)
+        proc = self.query_one(ProcessView)
+        self.call_from_thread(proc.start_run, len(paths), self.ocr_engine)
+
+        results: dict[str, str] = {}
+        for i, path in enumerate(paths, 1):
+            self.call_from_thread(proc.log_line, f"[#6a7488]{path.name}[/] — running")
+            try:
+                markdown = make_loader(settings, str(path)).load()
+            except Exception as exc:  # noqa: BLE001
+                markdown = ""
+                self.call_from_thread(
+                    proc.log_line, f"[#e06c6c]✗[/] {path.name}: {exc}"
+                )
+            results[path.name] = markdown
+            self.call_from_thread(proc.finish_file, i, path.name, len(markdown))
+
+        self.results = results
+        self.call_from_thread(self._on_ocr_done)
+
+    def _on_ocr_done(self) -> None:
+        self.query_one("#run-status", Static).update("● done")
+        self.query_one(MarkdownView).populate(self.results)
+        self.query_one(ExportView).set_summary(self.results, self.out_dir)
+        self.show_view("markdown")
+
+    # --- export -----------------------------------------------------------
+    def action_export(self) -> None:
+        if not self.results:
+            self.notify("Nothing to export yet — run OCR first.", severity="warning")
+            return
+        out = self.query_one(ExportView).output_dir()
+        out.mkdir(parents=True, exist_ok=True)
+        for name, markdown in self.results.items():
+            (out / name).write_text(markdown, encoding="utf-8")
+        self.notify(f"Exported {len(self.results)} file(s) → {out}")
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "do-export":
+            self.action_export()
+
+    # --- misc actions -----------------------------------------------------
     def action_toggle_theme(self) -> None:
         self.theme = (
             "glyph-ember" if self.theme == "glyph-midnight" else "glyph-midnight"

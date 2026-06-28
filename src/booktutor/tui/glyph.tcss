@@ -145,6 +145,15 @@ DataTable > .datatable--header {
 }
 
 /* --- Engines ------------------------------------------------------------- */
+#active-engine { height: auto; }
+#active-engine RadioSet {
+    layout: horizontal;
+    height: auto;
+    background: transparent;
+    border: none;
+}
+#active-engine RadioButton { margin: 0 2 0 0; }
+
 #engine-grid {
     grid-size: 2 2;
     grid-gutter: 1;

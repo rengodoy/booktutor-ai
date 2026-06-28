@@ -3,7 +3,16 @@
 from __future__ import annotations
 
 from textual.containers import Grid, Vertical
-from textual.widgets import Static, Switch
+from textual.widgets import RadioButton, RadioSet, Static, Switch
+
+# (engine value, label) for the ACTIVE ENGINE selector (sets Settings.ocr_engine)
+_ACTIVE = [
+    ("easyocr", "easyocr"),
+    ("tesseract", "tesseract"),
+    ("none", "none · text layer"),
+    ("merge", "merge · adaptive"),
+    ("deepseek2", "deepseek2 · server"),
+]
 
 # (id, title, subtitle, [(label, value)...], enabled, glow)
 _CARDS = [
@@ -52,6 +61,13 @@ _STRATEGY = (
 
 class EnginesView(Vertical):
     def compose(self):
+        active = Vertical(id="active-engine", classes="panel")
+        active.border_title = "ACTIVE ENGINE · MOTOR ATIVO"
+        with active:
+            yield RadioSet(
+                *(RadioButton(lbl, value=(val == "easyocr")) for val, lbl in _ACTIVE),
+                id="engine-radio",
+            )
         with Grid(id="engine-grid"):
             for cid, title, sub, params, enabled, glow in _CARDS:
                 card = Vertical(classes="engine-card" + (" glow" if glow else ""))
@@ -67,3 +83,7 @@ class EnginesView(Vertical):
         strat.border_title = "STRATEGY · ESTRATÉGIA"
         with strat:
             yield Static(_STRATEGY, markup=True)
+
+    def on_radio_set_changed(self, event: RadioSet.Changed) -> None:
+        if event.radio_set.id == "engine-radio":
+            self.app.set_engine(_ACTIVE[event.radio_set.pressed_index][0])

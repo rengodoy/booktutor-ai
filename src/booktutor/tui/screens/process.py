@@ -34,6 +34,7 @@ class ProcessView(Vertical):
                 "[$text-dim]eta[/] [$warning]00:09[/]    "
                 "[$text-dim]throughput[/] [$text-bright]3.2 pg/s[/]",
                 markup=True,
+                id="overall-stats",
             )
 
         par = Vertical(id="parallel", classes="panel")
@@ -62,3 +63,28 @@ class ProcessView(Vertical):
         rlog = self.query_one("#proc-richlog", RichLog)
         for line in _LOG:
             rlog.write(line)
+
+    # --- live run (called from the OCR worker via call_from_thread) --------
+    def start_run(self, total: int, engine: str) -> None:
+        self.query_one("#overall-bar", ProgressBar).update(
+            total=max(total, 1), progress=0
+        )
+        self.query_one("#overall-stats", Static).update(
+            f"[$text-dim]files[/] [$text-bright]0/{total}[/]    "
+            f"[$text-dim]engine[/] [$accent]{engine}[/]"
+        )
+        self.query_one("#proc-richlog", RichLog).clear()
+
+    def log_line(self, text: str) -> None:
+        self.query_one("#proc-richlog", RichLog).write(text)
+
+    def finish_file(self, done: int, name: str, chars: int) -> None:
+        bar = self.query_one("#overall-bar", ProgressBar)
+        bar.update(progress=done)
+        total = bar.total or done
+        self.query_one("#overall-stats", Static).update(
+            f"[$text-dim]files[/] [$text-bright]{done}/{int(total)}[/]"
+        )
+        self.query_one("#proc-richlog", RichLog).write(
+            f"[#6cc18f]✓[/] {name} [#6a7488]({chars:,} chars)[/]"
+        )
