@@ -17,6 +17,13 @@ def _check_files_exist(paths: list[str]) -> bool:
     return not missing
 
 
+def cmd_tui(args: argparse.Namespace, settings: Settings) -> int:
+    from booktutor.tui.app import GlyphApp
+
+    GlyphApp().run()
+    return 0
+
+
 def cmd_extract(args: argparse.Namespace, settings: Settings) -> int:
     if not _check_files_exist([args.source]):
         return 1
@@ -44,6 +51,9 @@ def build_parser() -> argparse.ArgumentParser:
         "-o", "--output", help="Output markdown path (default: <source>.md)."
     )
     p_extract.set_defaults(func=cmd_extract)
+
+    p_tui = sub.add_parser("tui", help="Launch the glyph TUI.")
+    p_tui.set_defaults(func=cmd_tui)
 
     return parser
 

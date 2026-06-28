@@ -66,10 +66,16 @@ sempre lê a imagem da página. `OCR_ENGINE=merge`. Endpoint reconciliador: a de
       tem VRAM. Documentado no README.
 
 ## 3. TUI (glyph)
-- [ ] Implementar a TUI descrita em `design_handoff_glyph_tui/README.md` usando Textual
-  - 9 telas: Dashboard (Midnight / Ember / Layout B), Input, Engines, Process,
-    Compare, Markdown, Export
-  - referência visual: `design_handoff_glyph_tui/glyph TUI.dc.html` + `screenshots/`
+Implementar a TUI de `design_handoff_glyph_tui/README.md` com Textual.
+Abordagem: shell fiel primeiro (mock), depois liga ao OCR. Entry: `booktutor tui`.
+Verificação: screenshots headless (run_test + save_screenshot → SVG → PNG via cairosvg).
+- [x] 3a: esqueleto — app + 2 temas (Midnight/Ember, toggle `t`) + frame (header
+      custom, sidebar PIPELINE, footer bilíngue) + ContentSwitcher + Dashboard
+      (mock: DOCUMENTS/ENGINES/ACTIVITY/stats). Validado por screenshot.
+- [ ] 3b: demais telas fiéis com mock — Input, Engines, Process, Compare,
+      Markdown, Export (Layout B do dashboard opcional).
+- [ ] 3c: ligar ao OCR real (Input escolhe PDFs, Engines→Settings, Process roda
+      extração com progresso ao vivo via workers, Markdown preview, Export grava).
 
 ## Questões em aberto
 - Renomear o projeto de `booktutor` para `glyph`? (o design já usa o nome `glyph`)

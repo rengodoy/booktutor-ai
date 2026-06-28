@@ -1,0 +1,128 @@
+/* glyph TUI — common frame + Dashboard. Colors come from the active theme
+   (themes.py): $background/$surface/$panel/$accent/$success/... plus the custom
+   $text-bright/$text-dim/$text-faint/$glyph-border/$accent-dim/$violet. */
+
+Screen {
+    background: $background;
+    color: $foreground;
+    layout: vertical;
+}
+
+/* --- top chrome / header bar --------------------------------------------- */
+#glyph-header {
+    height: 1;
+    background: $surface;
+    color: $text-dim;
+    padding: 0 1;
+}
+#glyph-header .brand {
+    color: $accent;
+    text-style: bold;
+}
+#glyph-header .subtitle {
+    color: $text-bright;
+}
+#glyph-header .spacer {
+    width: 1fr;
+}
+#glyph-header .pill {
+    color: $accent;
+    border: round $accent-dim;
+    padding: 0 1;
+    height: 1;
+}
+#glyph-header .status {
+    color: $success;
+}
+#glyph-header .clock {
+    color: $text-dim;
+}
+
+/* --- body: sidebar + content --------------------------------------------- */
+#body {
+    height: 1fr;
+}
+
+#nav {
+    width: 24;
+    background: $surface;
+    border: round $glyph-border;
+    border-title-color: $text-dim;
+    border-title-align: left;
+    padding: 0;
+}
+#nav > ListView {
+    background: transparent;
+}
+#nav ListItem {
+    background: transparent;
+    color: $text-dim;
+    padding: 0 1;
+    border-left: blank;
+}
+#nav ListItem.-highlight,
+#nav ListItem:hover {
+    background: $panel-tint;
+    color: $text-bright;
+    border-left: thick $accent;
+    text-style: bold;
+}
+#nav-foot {
+    dock: bottom;
+    height: 3;
+    color: $text-faint;
+    padding: 0 1;
+}
+
+#content {
+    width: 1fr;
+    padding: 0 0 0 1;
+}
+
+/* --- panels (border with title) ------------------------------------------ */
+.panel {
+    border: round $glyph-border;
+    border-title-color: $text-dim;
+    border-title-align: left;
+    background: $surface;
+    padding: 0 1;
+}
+.panel:focus-within {
+    border: round $accent;
+}
+
+/* --- Dashboard ----------------------------------------------------------- */
+#dashboard { layout: vertical; }
+#dash-row1 { height: 1fr; }
+#documents { width: 1fr; }
+#engines { width: 40; }
+#documents DataTable { background: transparent; height: 1fr; }
+DataTable > .datatable--header {
+    background: $panel;
+    color: $text-dim;
+    text-style: bold;
+}
+#activity { height: 10; }
+#activity RichLog { background: transparent; }
+
+#dash-stats { height: 5; }
+.stat {
+    width: 1fr;
+    border: round $glyph-border;
+    background: $surface;
+    content-align: left middle;
+    padding: 0 1;
+}
+.stat .num { text-style: bold; color: $text-bright; }
+.stat .num-accent { text-style: bold; color: $accent; }
+.stat .num-ok { text-style: bold; color: $success; }
+.stat .lbl { color: $text-dim; }
+
+/* --- generic placeholder view ------------------------------------------- */
+.placeholder {
+    border: round $glyph-border;
+    border-title-color: $text-dim;
+    color: $text-dim;
+    content-align: center middle;
+    height: 1fr;
+}
