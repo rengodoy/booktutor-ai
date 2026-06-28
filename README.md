@@ -142,9 +142,9 @@ Per-page engine output is cached, so escalating never re-runs an engine.
 
 ```dotenv
 OCR_ENGINE=merge
-MERGE_TIERS=easyocr;tesseract;easyocr,tesseract   # ';'-tiers of ','-engines
+MERGE_TIERS=easyocr;tesseract;easyocr,tesseract;easyocr,tesseract,deepseek2
 MERGE_API_BASE=http://127.0.0.1:8080/v1           # OpenAI-compatible vision endpoint
-MERGE_MODEL=qwen-27b                              # the reconciler/judge (vision)
+MERGE_MODEL=gemma-qat                             # the reconciler/judge (small vision model)
 MERGE_MIN_CONFIDENCE=0.85
 ```
 
@@ -159,13 +159,14 @@ A `deepseek2` source engine in a tier is called over HTTP at `MERGE_DEEPSEEK2_UR
 docker compose --profile deepseek2 up -d deepseek2     # MERGE_DEEPSEEK2_URL=http://deepseek2:8001
 ```
 
-> **VRAM:** each big model wants roughly a full 16 GB GPU — DeepSeek-OCR-2
-> inference ≈14.5 GB and a 27B reconciler ≈15 GB — so the `deepseek2` tier plus a
-> large reconciler plus EasyOCR won't co-reside on a single 2×16 GB box. Give the
-> `deepseek2` server its own GPU/host (point `MERGE_DEEPSEEK2_URL` at it), use a
-> smaller reconciler (e.g. `MERGE_MODEL=qwen-9b`), or keep `deepseek2` out of the
-> ladder and run it standalone (`OCR_ENGINE=deepseek2`). If the server is down,
-> the deepseek2 candidate is simply skipped.
+> **VRAM:** DeepSeek-OCR-2 inference takes ≈14.5 GB — about a full 16 GB GPU. A
+> **small reconciler is what makes the `deepseek2` tier fit**: with the default
+> `MERGE_MODEL=gemma-qat`, the full chain runs on a 2×16 GB box (validated —
+> `deepseek2` server on one GPU, EasyOCR + `gemma-qat` on the other). A large
+> reconciler (e.g. `qwen-27b`) wants ≈15 GB on its own, so it won't co-reside
+> with `deepseek2` + EasyOCR — give the `deepseek2` server its own GPU/host
+> (`MERGE_DEEPSEEK2_URL`) or keep `deepseek2` out of the ladder. If the server is
+> down, the deepseek2 candidate is simply skipped.
 
 **GPU sizing.** DeepSeek-OCR is ~3B params — it fits comfortably in **16 GB**
 (e.g. an RTX 5080 or RTX 2000 Ada), single GPU, no tensor-parallel. With two

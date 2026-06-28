@@ -71,7 +71,9 @@ class Settings(BaseSettings):
     )
     merge_api_base: str = Field(default="http://127.0.0.1:8080/v1")
     merge_api_key: str = Field(default="not-needed")
-    merge_model: str = Field(default="qwen-27b")
+    # A small vision model leaves GPU room for the deepseek2 tier; gemma-qat
+    # reconciles as well as the 27B here. Swap to a bigger one if you have VRAM.
+    merge_model: str = Field(default="gemma-qat")
     merge_max_tokens: int = Field(default=8192)
     merge_dpi: int = Field(default=144)
     merge_min_confidence: float = Field(default=0.85)

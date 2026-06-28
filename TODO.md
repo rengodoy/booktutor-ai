@@ -60,8 +60,10 @@ sempre lê a imagem da página. `OCR_ENGINE=merge`. Endpoint reconciliador: a de
       vira candidato vazio. **Validado**: o tier deepseek2 retornou 2019 chars via
       serviço (easyocr 2149 + deepseek2 2019 numa página). Caveat de hardware:
       ds2 (~14.5GB) + reconciliador 27B (~15GB) + easyocr não cabem juntos em
-      2×16GB — rodar o ds2 server em GPU/host dedicado, ou usar reconciliador
-      menor (qwen-9b), ou deepseek2 standalone. Documentado no README.
+      2×16GB. **Resolvido**: reconciliador menor `gemma-qat` (default) — chain
+      completo validado em 2×16GB (ds2→GPU1, easyocr+gemma-qat→GPU0): easyocr
+      2149 + deepseek2 2019 + reconcile conf 1.00. qwen-27b fica como alt p/ quem
+      tem VRAM. Documentado no README.
 
 ## 3. TUI (glyph)
 - [ ] Implementar a TUI descrita em `design_handoff_glyph_tui/README.md` usando Textual
