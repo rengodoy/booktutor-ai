@@ -23,17 +23,20 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 ENV UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
     UV_PYTHON=3.13 \
+    HF_HOME=/hf-cache \
     PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
-# Install dependencies first (better layer caching), then the project.
+# Install dependencies first (better layer caching), then the project. docling is
+# image-only now (not a default group), so install it explicitly.
 # .python-version pins CPython 3.13 (faiss-cpu has no 3.14 wheel yet).
 COPY pyproject.toml uv.lock README.md .python-version ./
-RUN uv sync --frozen --no-install-project --no-dev
+RUN uv sync --frozen --no-install-project --no-dev --group docling
 
 COPY . .
-RUN uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev --group docling
 
-ENTRYPOINT ["glyph"]
-CMD ["--help"]
+# Default: run the docling OCR HTTP server (the easyocr/tesseract source tiers).
+EXPOSE 8002
+CMD ["glyph-docling-server"]

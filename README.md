@@ -1,241 +1,166 @@
 # Glyph — PDF → Markdown OCR
 
-OCR any PDF (scanned or text-layer) into clean **Markdown**. It runs `docling`
-with a choice of OCR engines — **EasyOCR**, **Tesseract**, or a vision model
-(**DeepSeek-OCR** served by vLLM) — and writes one `.md` file per PDF.
+OCR any PDF (scanned or text-layer) into clean **Markdown** with **one adaptive
+command**. Glyph starts on the simplest OCR engine and a **Vision-LLM judges
+every page**, escalating to stronger engines only when confidence is low — and
+it tells you each time it does. One `.md` file per PDF.
 
 > This tool does **one thing**: high-quality OCR → Markdown. No chat, no RAG.
 
-## How it works
-
-`extract` converts a PDF to Markdown using the engine selected by `OCR_ENGINE`:
+## The command
 
 ```bash
-glyph extract livro.pdf            # writes livro.md
-glyph extract livro.pdf -o out.md  # custom output path
+glyph extract books/livro.pdf      # writes books/livro.md
 ```
 
-## OCR engines (`OCR_ENGINE`)
+`glyph` runs **locally** as a thin orchestrator (no torch/docling/transformers
+installed). Each page runs the cheapest engine first; the Vision-LLM reconciler
+reads the page image plus the candidate text, returns the best Markdown and a
+confidence. If confidence is below `MERGE_MIN_CONFIDENCE`, Glyph escalates to the
+next tier and prints it — with a live page progress bar:
 
-Pick the engine and **escalate manually** if the text comes out poor
-(worst → best on bad scans):
+```
+page 1/12: easyocr → confidence 0.94 ✓
+page 2/12: easyocr → confidence 0.61 — escalating to tesseract
+page 2/12: tesseract → confidence 0.71 — escalating to easyocr+tesseract
+page 2/12: easyocr+tesseract → confidence 0.89 ✓
+```
 
-| `OCR_ENGINE` | Quality on bad scans | Where to run |
-|---|---|---|
-| `none`      | — (uses the PDF's own text layer) | local |
-| `easyocr`   | good (GPU) | **local (uv)** |
-| `tesseract` | good, classic | **Docker** (lang packs installed) |
-| `vlm`       | best — DeepSeek-OCR reads the page image | **Docker** (vLLM service) |
-| `deepseek2` | best — DeepSeek-OCR-2 (DeepEncoder V2), in-process | local/Docker, **CUDA GPU** |
-| `merge`     | adaptive — escalates engines, a Vision-LLM reconciles | needs a vision endpoint |
+## Architecture — thin local orchestrator + on-demand engine services
 
-Set `OCR_FORCE_FULL_PAGE=true` to **ignore a garbled embedded text layer** and
-re-OCR from the page images — the single biggest fix for mojibake like
-`CONTEœDO`/`sªo`. Pick languages with `OCR_LANGUAGES` (e.g. `pt,en`).
+`glyph` holds no ML deps. The OCR engines are HTTP services in containers that it
+**spins up on demand** and **stops at the end** (only the ones it started):
 
-All settings come from environment variables / a `.env` file — see
-[`.env.example`](.env.example).
+```
+  glyph (LOCAL host process — pydantic-settings + openai + pypdfium2 + rich)
+    │  rasterize each page (pypdfium2)
+    │  per page, walk the tier ladder:
+    │   ├─ easyocr / tesseract ─HTTP─► docling service  :8002  (docker compose up -d, on demand)
+    │   ├─ deepseek2           ─HTTP─► deepseek2 service :8001  (on demand, GPU1)
+    │   └─ none                ─ local pypdfium2 text layer (no service)
+    │  judge / reconcile each page ─HTTP─► Vision-LLM (HOST, GPU0, already running :8080)
+    └─ at the end: docker compose stop <the services it started>   (frees VRAM)
+```
 
----
+* **`glyph` (local)** — the orchestrator + the `merge` adaptive pipeline. The only
+  thing you install on the host. Talks to everything over HTTP.
+* **`docling` service** — easyocr/tesseract OCR over HTTP (Tesseract lang packs
+  baked in). CPU by default — it's the cheap early tier.
+* **`deepseek2` service** — DeepSeek-OCR-2 over HTTP, pinned to GPU1. Its remote
+  code needs `transformers <4.48` (conflicts with docling's transformers 5), so it
+  lives in a separate image. The strongest tier of the ladder.
+* **Vision-LLM reconciler** — an OpenAI-compatible vision endpoint you run on the
+  host (e.g. llama.cpp serving `gemma-qat`) on GPU0. Not in compose.
 
-## Option A — Docker (recommended)
+The orchestrator brings a service up the first time the ladder needs it, polls its
+`/health` (showing a **model-load spinner / bar** from `/status` during the cold
+start), keeps it up for the rest of the PDF, and stops it on exit — including on
+Ctrl-C. A service you started yourself is reused and **left running**.
 
-Docker is the primary way to run this: Tesseract lang packs are baked into the
-image and the VLM engine (DeepSeek-OCR via vLLM) is wired up in compose. Put
-PDFs in `./books`; extracted Markdown is written next to each PDF. Config comes
-from `.env`.
+## Setup
 
 ```bash
-cp .env.example .env   # then edit OCR_ENGINE / OCR_LANGUAGES
-docker compose build   # builds the docling image (easyocr/tesseract/vlm)
+uv sync                    # thin local install (orchestrator only — no torch)
+cp .env.example .env       # defaults target the published service ports on 127.0.0.1
+docker compose build       # builds the docling + deepseek2 images (one-time)
 ```
 
-> The `deepseek2` engine has its own image — build it with
-> `docker compose --profile deepseek2 build deepseek2` (see below).
-
-### Tesseract OCR
-
-Set `OCR_ENGINE=tesseract` and `OCR_LANGUAGES=pt,en` in `.env`, then:
+Start your **Vision-LLM** on the host at `:8080` (serving `MERGE_MODEL`, e.g.
+`gemma-qat`, on GPU0). Then extract — engine services start on demand:
 
 ```bash
-docker compose run --rm glyph extract books/livro.pdf
+glyph extract books/livro.pdf
 ```
 
-### VLM OCR (DeepSeek-OCR via vLLM)
+> If the host Vision-LLM is down, the default `merge` engine fails fast with a
+> clear message (`MERGE_API_BASE` is required). If a single engine service won't
+> start, that tier is skipped and the run continues with the other engines.
 
-Best quality on degraded scans. Start the vLLM service (the `vlm` profile),
-point the app at it, and extract. In `.env`:
+Useful flags: `--keep-up` (leave the services running for the next run),
+`--no-autostart` (assume the services are already up; don't spin them).
 
-```dotenv
-OCR_ENGINE=vlm
-VLM_OCR_API_BASE=http://deepseek-ocr:8000/v1   # the compose service name
-VLM_OCR_MODEL=unsloth/DeepSeek-OCR
-```
+## Tuning the ladder
+
+All config is environment variables / `.env` (see [`.env.example`](.env.example)):
+
+| Variable | What it does |
+|---|---|
+| `MERGE_TIERS` | escalation ladder, simplest→strongest. `;`-separated tiers, each a `,`-list of engines. Default: `easyocr;tesseract;easyocr,tesseract;easyocr,tesseract,deepseek2` |
+| `MERGE_MIN_CONFIDENCE` | escalate while the reconciler's confidence is below this (default `0.85`) |
+| `MERGE_MODEL` | the Vision-LLM reconciler/judge (default `gemma-qat`) |
+| `MERGE_API_BASE` | the reconciler endpoint (default the host: `http://127.0.0.1:8080/v1`) |
+| `MERGE_DOCLING_URL` / `MERGE_DEEPSEEK2_URL` | the on-demand engine services (default `127.0.0.1:8002` / `:8001`) |
+| `SERVICE_AUTOSTART` / `SERVICE_STOP_ON_EXIT` | spin services up on demand / stop the ones we started (default both `true`) |
+| `OCR_LANGUAGES` | OCR languages, e.g. `pt,en` |
+| `OCR_FORCE_FULL_PAGE` | `true` re-OCRs from the page image, ignoring a garbled embedded text layer — the single biggest fix for mojibake like `CONTEœDO`/`sªo` |
+
+### Pin a single engine (skip escalation)
+
+For debugging or a known-good scan, force one engine — it becomes a one-tier
+ladder through the same orchestrator (the Vision-LLM still reconciles the single
+candidate):
 
 ```bash
-# 1. bring up the OCR model server (first run downloads the weights — large)
-docker compose --profile vlm up -d deepseek-ocr
-
-# 2. extract through it
-docker compose run --rm glyph extract books/livro.pdf
+# in .env: OCR_ENGINE=tesseract   (or easyocr | none | deepseek2)
+glyph extract books/livro.pdf
 ```
 
-> ⚠️ DeepSeek-OCR needs a recent/nightly vLLM. If the model fails to load,
-> adjust the image tag or flags on the `deepseek-ocr` service in
-> `docker-compose.yaml` (see the
-> [Unsloth guide](https://unsloth.ai/docs/models/tutorials/deepseek-ocr-how-to-run-and-fine-tune)).
+`OCR_ENGINE=none` uses the PDF's own embedded text layer (no OCR service, no GPU).
 
-### DeepSeek-OCR-2 (in-process, its own image)
+## Development — edit code, no rebuild
 
-`OCR_ENGINE=deepseek2` runs **DeepSeek-OCR-2** (DeepEncoder V2) directly in the
-process via transformers (`trust_remote_code`) — no inference server. Needs a
-**CUDA GPU**; the weights download once and are cached by Hugging Face.
+`./src` is bind-mounted into both service images over the editable install, so
+server code changes take effect on the next `docker compose up` — only
+`pyproject.toml`/lockfile changes need a rebuild. Orchestrator changes are live
+(it runs from your local `uv` env).
 
-It ships as a **separate image** (`Dockerfile.deepseek2`, compose service
-`deepseek2`, profile `deepseek2`) because its remote code needs
-`transformers <4.48` (`LlamaFlashAttention2`), which conflicts with docling 2.10x
-(needs transformers 5, `rt_detr_v2`). The two can't share a venv, so each lives
-in its own uv dependency group (`docling` default vs `deepseek2`).
-
-In `.env`:
-
-```dotenv
-OCR_ENGINE=deepseek2
-DS2_MODEL=deepseek-ai/DeepSeek-OCR-2   # or unsloth/DeepSeek-OCR-2 (set DS2_IMAGE_SIZE=640)
-DS2_ATTN_IMPL=eager                    # "flash_attention_2" is faster but needs flash-attn
-```
+Run the tests (lazy imports, so no heavy deps needed):
 
 ```bash
-docker compose --profile deepseek2 build deepseek2
-# one-off CLI extract (override the default command):
-docker compose --profile deepseek2 run --rm deepseek2 glyph extract books/livro.pdf
+uv run pytest
+uv run ruff check
 ```
 
-The `deepseek2` image also runs an **HTTP OCR server** (its default command,
-`glyph-deepseek2-server`, on port 8001) so the `merge` engine can use
-DeepSeek-OCR-2 as a source tier without the venv conflict:
+### Running the engine services standalone
 
 ```bash
-docker compose --profile deepseek2 up -d deepseek2          # loads the model once
-curl -s -XPOST localhost:8001/ocr -H 'content-type: application/json' \
-     -d '{"image_b64":"<base64 png>"}'                      # -> {"markdown": "..."}
+docker compose up -d docling      # easyocr/tesseract OCR HTTP server :8002
+docker compose up -d deepseek2    # DeepSeek-OCR-2 HTTP server :8001 (GPU1)
 ```
 
-Locally (its own group; do **not** mix with docling):
+## GPU / VRAM
 
-```bash
-uv sync --no-group docling --group deepseek2
-uv run --no-group docling --group deepseek2 glyph extract livro.pdf
-```
+DeepSeek-OCR-2 inference takes ≈14.5 GB — about a full 16 GB GPU. On a 2×16 GB
+box: the Vision-LLM reconciler runs on **GPU0**, `deepseek2` is pinned to **GPU1**
+(`device_ids: ['1']` in `docker-compose.yaml`), and `docling` runs on **CPU**
+(it's the cheap early tier; Tesseract is CPU anyway). A small reconciler
+(`MERGE_MODEL=gemma-qat`) reconciles as well as a 27B here and leaves room. To put
+docling on GPU0 if there's headroom, uncomment its `deploy` block.
 
 > ⚠️ vLLM doesn't yet serve DeepSeek-OCR-2 on CUDA (`DeepseekOCR2ForCausalLM`
-> not supported; vLLM issue #41468), which is why this path is in-process.
-> `flash-attn` is optional: the default `eager` works everywhere.
-
-### Merge (adaptive multi-engine + Vision-LLM reconciler)
-
-`OCR_ENGINE=merge` reconciles several OCR engines with a vision model. Per page
-it **escalates** through configured tiers of source engines; the reconciler reads
-the page image plus the candidate transcriptions, returns the best Markdown and a
-confidence, and escalation stops once confidence reaches `MERGE_MIN_CONFIDENCE`.
-Per-page engine output is cached, so escalating never re-runs an engine.
-
-```dotenv
-OCR_ENGINE=merge
-MERGE_TIERS=easyocr;tesseract;easyocr,tesseract;easyocr,tesseract,deepseek2
-MERGE_API_BASE=http://127.0.0.1:8080/v1           # OpenAI-compatible vision endpoint
-MERGE_MODEL=gemma-qat                             # the reconciler/judge (small vision model)
-MERGE_MIN_CONFIDENCE=0.85
-```
-
-Runs in the docling image (docling engines + the vision endpoint). A strong
-vision reconciler does much of the OCR from the image itself, so even weak source
-candidates still yield good Markdown.
-
-A `deepseek2` source engine in a tier is called over HTTP at `MERGE_DEEPSEEK2_URL`
-(the standalone DeepSeek-OCR-2 server). Bring it up first:
-
-```bash
-docker compose --profile deepseek2 up -d deepseek2     # MERGE_DEEPSEEK2_URL=http://deepseek2:8001
-```
-
-> **VRAM:** DeepSeek-OCR-2 inference takes ≈14.5 GB — about a full 16 GB GPU. A
-> **small reconciler is what makes the `deepseek2` tier fit**: with the default
-> `MERGE_MODEL=gemma-qat`, the full chain runs on a 2×16 GB box (validated —
-> `deepseek2` server on one GPU, EasyOCR + `gemma-qat` on the other). A large
-> reconciler (e.g. `qwen-27b`) wants ≈15 GB on its own, so it won't co-reside
-> with `deepseek2` + EasyOCR — give the `deepseek2` server its own GPU/host
-> (`MERGE_DEEPSEEK2_URL`) or keep `deepseek2` out of the ladder. If the server is
-> down, the deepseek2 candidate is simply skipped.
-
-**GPU sizing.** DeepSeek-OCR is ~3B params — it fits comfortably in **16 GB**
-(e.g. an RTX 5080 or RTX 2000 Ada), single GPU, no tensor-parallel. With two
-GPUs, pin the OCR server to one and leave the other for the app (docling) to
-avoid contention, e.g. set `device_ids: ['0']` on `deepseek-ocr` and `['1']` on
-`glyph` in `docker-compose.yaml` (replacing `count: all`). Drop the
-`deploy.resources` block entirely to run CPU-only (much slower).
-
----
-
-## Option B — Local with uv + venv
-
-The OCR engines are **mutually-exclusive dependency groups**: `docling`
-(easyocr/tesseract/none/vlm + the TUI) is **installed by default**, `deepseek2`
-is opt-in.
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh   # install uv (once)
-uv sync                                            # build .venv (docling, default)
-cp .env.example .env                               # set OCR_ENGINE / OCR_LANGUAGES
-
-uv run glyph extract livro.pdf                     # writes livro.md (no flag)
-```
-
-For DeepSeek-OCR-2, switch groups (don't mix the two in one venv):
-
-```bash
-uv sync --no-group docling --group deepseek2
-uv run --no-group docling --group deepseek2 glyph extract livro.pdf
-```
-
-Prefer an activated shell? That works too:
-
-```bash
-source .venv/bin/activate
-glyph extract livro.pdf
-python -m glyph extract livro.pdf   # equivalent module form
-deactivate
-```
-
-### Development
-
-```bash
-uv run pytest        # run the test suite (no extra needed — imports are lazy)
-uv run ruff check    # lint
-```
-
----
+> unsupported; vLLM issue #41468) — that's why this tier is a transformers
+> in-process server. `flash-attn` is optional; the default `eager` works everywhere.
 
 ## Project layout
 
 ```
 src/glyph/
-├── config.py        # Settings from env / .env (pydantic-settings)
-├── loaders.py       # make_loader(): docling / VLM / DeepSeek-OCR-2
-└── cli.py           # extract
-tests/               # config + loader selection
-Dockerfile           # docling image (easyocr/tesseract/vlm)
-Dockerfile.deepseek2 # DeepSeek-OCR-2 image (separate transformers)
+├── config.py          # Settings from env / .env (pydantic-settings)
+├── progress.py        # ProgressReporter event contract + ConsoleReporter (rich)
+├── services.py        # ServiceManager: on-demand `docker compose up/stop`
+├── loaders.py         # MergeOcrLoader — the thin adaptive orchestrator
+├── docling_server.py  # docling OCR HTTP server (easyocr/tesseract tiers)
+├── ds2_server.py      # DeepSeek-OCR-2 HTTP server (the deepseek2 tier)
+└── cli.py             # extract
+tests/                 # config / loaders / services / progress / servers
+Dockerfile             # docling image (easyocr/tesseract) — glyph-docling-server
+Dockerfile.deepseek2   # DeepSeek-OCR-2 image — glyph-deepseek2-server
 ```
-
-The OCR engines live in two **mutually-exclusive** uv dependency groups —
-`docling` (transformers 5, default) and `deepseek2` (transformers <4.48) —
-declared as conflicting in `pyproject.toml`, so they never share a venv.
 
 ## Requirements
 
-- Python 3.13+
-- [`uv`](https://docs.astral.sh/uv/) (recommended) — or Docker
-- For `vlm`: an OpenAI-compatible vision endpoint serving DeepSeek-OCR
-  (the bundled `deepseek-ocr` compose service)
-- For `deepseek2`: a CUDA GPU (~16 GB); weights download once and are cached
+- Python 3.13+ with [`uv`](https://docs.astral.sh/uv/) on the host (thin install)
+- Docker — for the OCR engine services
+- A CUDA GPU (~16 GB) for the `deepseek2` tier; weights cached in the `hf-cache` volume
+- An OpenAI-compatible **Vision-LLM** on the host for the `merge` reconciler
+```

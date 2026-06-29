@@ -1,8 +1,9 @@
 """Glyph — OCR any PDF into high-quality Markdown.
 
-Runs docling (EasyOCR / Tesseract) or a vision model (DeepSeek-OCR via vLLM)
-to turn scanned or text-layer PDFs into Markdown. Configure it through
-environment variables / a ``.env`` file — see :class:`glyph.config.Settings`.
+One adaptive command (``merge``): start on the simplest engine — docling
+(EasyOCR / Tesseract) — and let a Vision-LLM judge each page and escalate to
+DeepSeek-OCR-2 when confidence is low. Configure it through environment
+variables / a ``.env`` file — see :class:`glyph.config.Settings`.
 """
 
 from glyph.config import Settings

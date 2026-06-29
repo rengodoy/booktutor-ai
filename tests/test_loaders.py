@@ -1,59 +1,45 @@
 from glyph.config import Settings
-from glyph.loaders import (
-    DeepSeekOcr2Loader,
-    DoclingBookLoader,
-    MergeOcrLoader,
-    VlmOcrLoader,
-    _parse_reconcile,
-    make_loader,
-)
+from glyph.loaders import MergeOcrLoader, _parse_reconcile, make_loader
 
 
 def _settings(**over) -> Settings:
     return Settings(_env_file=None, **over)
 
 
-def test_make_loader_easyocr_default():
-    loader = make_loader(_settings(ocr_languages="pt,en"), "book.pdf")
-    assert isinstance(loader, DoclingBookLoader)
-    assert loader.ocr_engine == "easyocr"
-    assert loader.ocr_languages == ["pt", "en"]
+def test_make_loader_default_is_merge():
+    loader = make_loader(_settings(), "book.pdf")
+    assert isinstance(loader, MergeOcrLoader)
+    assert loader.tiers == [
+        ["easyocr"],
+        ["tesseract"],
+        ["easyocr", "tesseract"],
+        ["easyocr", "tesseract", "deepseek2"],
+    ]
 
 
-def test_make_loader_tesseract():
+def test_make_loader_pinned_easyocr():
+    # A pinned engine is just a one-tier ladder through the same orchestrator.
+    loader = make_loader(
+        _settings(ocr_engine="easyocr", ocr_languages="pt,en"), "book.pdf"
+    )
+    assert isinstance(loader, MergeOcrLoader)
+    assert loader.tiers == [["easyocr"]]
+    assert loader.languages == ["pt", "en"]
+
+
+def test_make_loader_pinned_tesseract():
     loader = make_loader(_settings(ocr_engine="tesseract"), "book.pdf")
-    assert isinstance(loader, DoclingBookLoader)
-    assert loader.ocr_engine == "tesseract"
+    assert loader.tiers == [["tesseract"]]
 
 
-def test_make_loader_none():
+def test_make_loader_pinned_none():
     loader = make_loader(_settings(ocr_engine="none"), "book.pdf")
-    assert isinstance(loader, DoclingBookLoader)
-    assert loader.ocr_engine == "none"
+    assert loader.tiers == [["none"]]
 
 
-def test_make_loader_vlm():
-    loader = make_loader(
-        _settings(ocr_engine="vlm", vlm_ocr_api_base="http://vllm:8000/v1"),
-        "book.pdf",
-    )
-    assert isinstance(loader, VlmOcrLoader)
-    assert loader.api_base == "http://vllm:8000/v1"
-    assert loader.model == "unsloth/DeepSeek-OCR"
-    assert loader.prompt == "Free OCR."
-
-
-def test_make_loader_deepseek2():
-    loader = make_loader(
-        _settings(ocr_engine="deepseek2", ds2_image_size=640),
-        "book.pdf",
-    )
-    assert isinstance(loader, DeepSeekOcr2Loader)
-    assert loader.model == "deepseek-ai/DeepSeek-OCR-2"
-    assert loader.image_size == 640
-    assert loader.crop_mode is True
-    assert loader.attn_impl == "eager"
-    assert "<|grounding|>" in loader.prompt
+def test_make_loader_pinned_deepseek2():
+    loader = make_loader(_settings(ocr_engine="deepseek2"), "book.pdf")
+    assert loader.tiers == [["deepseek2"]]
 
 
 def test_make_loader_merge():
@@ -64,13 +50,17 @@ def test_make_loader_merge():
     assert isinstance(loader, MergeOcrLoader)
     assert loader.model == "qwen-27b"
     assert loader.min_confidence == 0.9
+    assert loader.docling_url == "http://127.0.0.1:8002"
     assert loader.deepseek2_url == "http://127.0.0.1:8001"
-    assert loader.tiers == [
-        ["easyocr"],
-        ["tesseract"],
-        ["easyocr", "tesseract"],
-        ["easyocr", "tesseract", "deepseek2"],
-    ]
+
+
+def test_make_loader_passes_services_and_reporter():
+    # Explicit services/reporter are threaded onto the loader.
+    sentinel_services = object()
+    sentinel_reporter = object()
+    loader = make_loader(_settings(), "book.pdf", sentinel_services, sentinel_reporter)
+    assert loader.services is sentinel_services
+    assert loader.reporter is sentinel_reporter
 
 
 def test_merge_tier_list_parsing():
@@ -94,11 +84,3 @@ def test_parse_reconcile_garbage_falls_back():
     conf, md = _parse_reconcile("not json at all")
     assert conf == 0.0
     assert md == "not json at all"
-
-
-def test_tesseract_lang_mapping():
-    # easyocr codes (pt,en) map to tesseract codes (por,eng) in the converter.
-    from glyph.loaders import _TESSERACT_LANG
-
-    assert _TESSERACT_LANG["pt"] == "por"
-    assert _TESSERACT_LANG["en"] == "eng"

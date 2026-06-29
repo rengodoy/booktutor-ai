@@ -1,33 +1,39 @@
 [project]
 name = "glyph-ai"
-version = "0.3.0"
-description = "OCR any PDF into high-quality Markdown (docling / DeepSeek-OCR)."
+version = "0.4.0"
+description = "OCR any PDF into high-quality Markdown (thin local orchestrator)."
 readme = "README.md"
 requires-python = ">=3.13"
+# Thin local install: glyph runs on the host as an orchestrator. NO
+# torch/docling/transformers locally — the OCR engines are on-demand HTTP
+# services in containers (docling / deepseek2 groups, built into images).
 dependencies = [
     "pydantic-settings>=2.5.0",
+    "openai>=1.30.0",       # Vision-LLM reconciler client (host, GPU0)
+    "pypdfium2>=4.30",      # rasterize PDF pages + `none` text layer (zero deps)
+    "rich>=13.0",           # console progress bars / spinners (pure-python)
 ]
 
 [project.scripts]
 glyph = "glyph.cli:main"
+glyph-docling-server = "glyph.docling_server:main"
 glyph-deepseek2-server = "glyph.ds2_server:main"
 
-# OCR engines are mutually-exclusive dependency groups: docling needs
+# OCR engines are mutually-exclusive, image-only dependency groups: docling needs
 # transformers 5 (rt_detr_v2 layout model) while DeepSeek-OCR-2's remote code
 # needs transformers <4.48 (LlamaFlashAttention2). They cannot share one venv, so
-# each ships in its own image (Dockerfile / Dockerfile.deepseek2). `docling` is a
-# default group, so `uv run glyph` works with no flag; for deepseek2 use
-# `--no-group docling --group deepseek2`. The conflict (under [tool.uv]) keeps a
-# single lockfile with both resolutions.
+# each ships in its own image (Dockerfile / Dockerfile.deepseek2). Neither is
+# installed locally — the thin orchestrator talks to them over HTTP. The conflict
+# (under [tool.uv]) keeps a single lockfile with both resolutions.
 [dependency-groups]
-# easyocr/tesseract engines + vlm (DeepSeek-OCR v1 over an OpenAI-compatible
-# vision endpoint) + the glyph TUI. easyocr/tesserocr are docling extras (2.10x).
+# docling OCR HTTP service (glyph-docling-server): easyocr/tesseract engines.
+# easyocr/tesserocr are docling extras (2.10x). fastapi/uvicorn serve /ocr.
 docling = [
     "docling[easyocr,tesserocr]>=2.107.0",
     "huggingface-hub[hf-xet]>=0.32.3",
-    "openai>=1.30.0",
     "torch>=2.7.1",
-    "textual>=0.80",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
 ]
 # DeepSeek-OCR-2 in-process via transformers (trust_remote_code). No docling.
 # flash-attn is optional (set DS2_ATTN_IMPL=flash_attention_2 if installed).
@@ -45,6 +51,10 @@ deepseek2 = [
     "fastapi>=0.110",
     "uvicorn>=0.29",
 ]
+# The glyph TUI (parked — built later). Lazy-imported by `glyph tui`.
+tui = [
+    "textual>=0.80",
+]
 dev = [
     "pytest>=8.2.0",
     "ruff>=0.6.0",
@@ -58,8 +68,9 @@ build-backend = "hatchling.build"
 packages = ["src/glyph"]
 
 [tool.uv]
-# docling is installed by default (no --extra needed); deepseek2 is opt-in.
-default-groups = ["dev", "docling"]
+# Local install = base + dev only (thin orchestrator). docling/deepseek2 are
+# image-only (built into their Dockerfiles via --group); tui is opt-in.
+default-groups = ["dev"]
 # docling and deepseek2 pull incompatible transformers majors; mark them as
 # conflicting so uv resolves each branch separately into one lockfile.
 conflicts = [

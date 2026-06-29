@@ -1,41 +1,50 @@
+# glyph runs LOCALLY on the host as a thin orchestrator (no torch/docling here).
+# These are the on-demand OCR engine services it spins up via `docker compose
+# up -d <svc>`, calls over HTTP (published ports on 127.0.0.1), and stops at the
+# end of a run. You can also start them yourself; glyph reuses a running service.
 services:
   # ----------------------------------------------------------------------------
-  # App container. Runs the glyph OCR CLI with tesseract OCR baked into the
-  # image (lang packs por/eng). Use it for OCR_ENGINE=tesseract, or OCR_ENGINE=vlm
-  # (then it calls the deepseek-ocr service below).
-  #   docker compose run --rm glyph extract books/livro.pdf
+  # docling part. easyocr / tesseract OCR over HTTP (glyph-docling-server :8002),
+  # with Tesseract lang packs (por/eng) baked into the image. CPU by default —
+  # it's the cheap early tier and Tesseract is CPU anyway. The orchestrator POSTs
+  # a rasterized page PNG to /ocr; no PDFs are mounted.
+  #   docker compose up -d docling
   # ----------------------------------------------------------------------------
-  glyph:
+  docling:
     build:
       context: .
       dockerfile: Dockerfile
     image: rengodoy/glyph-ai:latest
-    container_name: glyph
+    container_name: glyph-docling
     env_file:
       - .env
+    environment:
+      - HF_HOME=/hf-cache
+    ports:
+      - "8002:8002"   # OCR HTTP server (DOCLING_SERVER_PORT)
     volumes:
-      - ./books:/app/books      # drop your PDFs here
-      - ./pdf:/app/pdf          # (also) source PDFs / extracted markdown
-      - hf-cache:/home/ubuntu/.cache/huggingface  # model cache (docling / easyocr)
-    stdin_open: true
-    tty: true
-    # GPU (comment out if running CPU-only):
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-    command: ["--help"]
+      - ./src:/app/src          # editable install -> live code, no rebuild
+      - hf-cache:/hf-cache      # model cache (docling / easyocr) — persists
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,os; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\\\"DOCLING_SERVER_PORT\\\",\\\"8002\\\")}/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+    # CPU by default. To put docling on GPU0 (if there's headroom), uncomment:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           device_ids: ['0']
+    #           capabilities: [gpu]
 
   # ----------------------------------------------------------------------------
-  # DeepSeek-OCR-2 in its own image (transformers <4.48 conflicts with docling).
-  # Needs a CUDA GPU. Two uses (profile "deepseek2"):
-  #   * HTTP OCR server (default CMD) — lets the `merge` engine use deepseek2 as
-  #     a source tier:  docker compose --profile deepseek2 up -d deepseek2
-  #   * one-off CLI extract (override the command):
-  #     docker compose --profile deepseek2 run --rm deepseek2 glyph extract books/livro.pdf
+  # deepseek2 part. DeepSeek-OCR-2 over HTTP (glyph-deepseek2-server :8001) in its
+  # own image (transformers <4.48 conflicts with docling). Pinned to GPU1. The
+  # strongest tier of the ladder; the model loads once (minutes-long cold start).
+  #   docker compose up -d deepseek2
   # ----------------------------------------------------------------------------
   deepseek2:
     build:
@@ -43,23 +52,21 @@ services:
       dockerfile: Dockerfile.deepseek2
     image: rengodoy/glyph-deepseek2:latest
     container_name: glyph-deepseek2
-    profiles: ["deepseek2"]
     env_file:
       - .env
+    environment:
+      - HF_HOME=/hf-cache
     ports:
       - "8001:8001"   # OCR HTTP server (DS2_SERVER_PORT)
     volumes:
-      - ./books:/app/books
-      - ./pdf:/app/pdf
-      - hf-cache:/home/ubuntu/.cache/huggingface  # model cache (DeepSeek-OCR-2)
-    stdin_open: true
-    tty: true
+      - ./src:/app/src          # editable install -> live code, no rebuild
+      - hf-cache:/hf-cache      # model cache (DeepSeek-OCR-2) — persists
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
-              count: all
+              device_ids: ['1']   # pin to GPU1 (Vision-LLM reconciler holds GPU0)
               capabilities: [gpu]
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request,os; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\\\"DS2_SERVER_PORT\\\",\\\"8001\\\")}/health')\""]
@@ -67,42 +74,6 @@ services:
       timeout: 5s
       retries: 20
       start_period: 300s
-
-  # ----------------------------------------------------------------------------
-  # DeepSeek-OCR served by vLLM (OpenAI-compatible vision endpoint), used when
-  # OCR_ENGINE=vlm. Started only with the "vlm" profile:
-  #   docker compose --profile vlm up -d deepseek-ocr
-  #   docker compose run --rm glyph extract books/livro.pdf
-  # In .env set: OCR_ENGINE=vlm and VLM_OCR_API_BASE=http://deepseek-ocr:8000/v1
-  # NOTE: DeepSeek-OCR needs a recent/nightly vLLM; adjust the image/flags if the
-  # model fails to load (see README).
-  # ----------------------------------------------------------------------------
-  deepseek-ocr:
-    image: vllm/vllm-openai:nightly
-    container_name: deepseek-ocr
-    profiles: ["vlm"]
-    command:
-      - "--model=unsloth/DeepSeek-OCR"
-      - "--served-model-name=unsloth/DeepSeek-OCR"
-      - "--trust-remote-code"
-      - "--max-model-len=8192"
-      - "--gpu-memory-utilization=0.85"
-    environment:
-      - CUDA_DEVICE_ORDER=PCI_BUS_ID
-    ports:
-      - "8000:8000"
-    volumes:
-      - hf-cache:/root/.cache/huggingface
-    ipc: host
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              # Pin to one idle GPU (avoids contention with the app / desktop).
-              # Adjust the index to your free GPU (see `nvidia-smi -L`).
-              device_ids: ["1"]
-              capabilities: [gpu]
 
 volumes:
   hf-cache:
