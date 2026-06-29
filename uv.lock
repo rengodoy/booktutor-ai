@@ -2,21 +2,21 @@ version = 1
 revision = 3
 requires-python = ">=3.13"
 resolution-markers = [
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
-    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
-    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling')",
-    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
-    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
-    "extra != 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')",
+    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')",
+    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling')",
+    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling'",
+    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling'",
+    "extra != 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling'",
 ]
 conflicts = [[
-    { package = "glyph-ai", extra = "deepseek2" },
-    { package = "glyph-ai", extra = "docling" },
+    { package = "glyph-ai", group = "deepseek2" },
+    { package = "glyph-ai", group = "docling" },
 ]]
 
 [manifest]
@@ -38,8 +38,8 @@ dependencies = [
     { name = "psutil" },
     { name = "pyyaml" },
     { name = "safetensors" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/8d/75/94cd5d389649578aca399e5aa822637eec18319a1dadc400ffe2f9a7493f/accelerate-1.14.0.tar.gz", hash = "sha256:41b9c4377a54e0b460a959b0defa1b736e4ca0a2373252d9a539964c2afe3c8d", size = 412167, upload-time = "2026-06-11T13:45:52.326Z" }
 wheels = [
@@ -345,7 +345,7 @@ name = "docling"
 version = "2.107.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "docling-slim", extra = ["standard"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "docling-slim", extra = ["standard"], marker = "extra == 'group-8-glyph-ai-docling'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5e/b3/c0563269a680c4f3cf2b5814b8a2cb7e490d26343a25834124808896d1b3/docling-2.107.0.tar.gz", hash = "sha256:cabd688c00681361d13ccf00d802e4ef4e0514fcf6e9088709d58c10fbef08c1", size = 8946, upload-time = "2026-06-24T13:13:21.841Z" }
 wheels = [
@@ -354,10 +354,10 @@ wheels = [
 
 [package.optional-dependencies]
 easyocr = [
-    { name = "docling-slim", extra = ["feat-ocr-easyocr"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "docling-slim", extra = ["feat-ocr-easyocr"], marker = "extra == 'group-8-glyph-ai-docling'" },
 ]
 tesserocr = [
-    { name = "docling-slim", extra = ["feat-ocr-tesserocr"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "docling-slim", extra = ["feat-ocr-tesserocr"], marker = "extra == 'group-8-glyph-ai-docling'" },
 ]
 
 [[package]]
@@ -387,8 +387,8 @@ wheels = [
 [package.optional-dependencies]
 chunking = [
     { name = "semchunk" },
-    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "transformers", version = "5.12.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "transformers", version = "5.12.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
     { name = "tree-sitter" },
     { name = "tree-sitter-c" },
     { name = "tree-sitter-javascript" },
@@ -409,15 +409,15 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
     { name = "rtree" },
-    { name = "safetensors", extra = ["torch"], marker = "extra == 'extra-8-glyph-ai-docling'" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "safetensors", extra = ["torch"], marker = "extra == 'group-8-glyph-ai-docling'" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
     { name = "tqdm" },
-    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "transformers", version = "5.12.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "transformers", version = "5.12.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/37/2b/c0ad433da1210672d6e8e774f1ba601824e0d23153e8cd963521dcf1c28c/docling_ibm_models-3.13.3.tar.gz", hash = "sha256:8c8b55e80b3d20fc74d85ca49a4d064578ef75b9f7251eec42fc9df6af426218", size = 98768, upload-time = "2026-06-04T08:23:08.088Z" }
 wheels = [
@@ -478,7 +478,7 @@ standard = [
     { name = "accelerate" },
     { name = "beautifulsoup4" },
     { name = "defusedxml" },
-    { name = "docling-core", extra = ["chunking"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "docling-core", extra = ["chunking"], marker = "extra == 'group-8-glyph-ai-docling'" },
     { name = "docling-ibm-models" },
     { name = "docling-parse" },
     { name = "httpx" },
@@ -499,11 +499,11 @@ standard = [
     { name = "rich" },
     { name = "rtree" },
     { name = "scipy" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
     { name = "typer" },
     { name = "websockets" },
 ]
@@ -532,11 +532,11 @@ dependencies = [
     { name = "scikit-image" },
     { name = "scipy" },
     { name = "shapely" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bb/84/4a2cab0e6adde6a85e7ba543862e5fc0250c51f3ac721a078a55cdcff250/easyocr-1.7.2-py3-none-any.whl", hash = "sha256:5be12f9b0e595d443c9c3d10b0542074b50f0ec2d98b141a109cd961fd1c177c", size = 2870178, upload-time = "2024-09-24T11:34:43.554Z" },
@@ -656,69 +656,68 @@ dependencies = [
     { name = "pydantic-settings" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 deepseek2 = [
     { name = "addict" },
     { name = "easydict" },
     { name = "einops" },
     { name = "fastapi" },
-    { name = "huggingface-hub", version = "0.36.2", source = { registry = "https://pypi.org/simple" }, extra = ["hf-xet"], marker = "extra == 'extra-8-glyph-ai-deepseek2'" },
+    { name = "huggingface-hub", version = "0.36.2", source = { registry = "https://pypi.org/simple" }, extra = ["hf-xet"], marker = "extra == 'group-8-glyph-ai-deepseek2'" },
     { name = "matplotlib" },
     { name = "pillow" },
     { name = "pypdfium2" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (python_full_version >= '3.14' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-deepseek2') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2') or (python_full_version >= '3.14' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-deepseek2') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2') or (sys_platform != 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
     { name = "transformers", version = "4.47.1", source = { registry = "https://pypi.org/simple" } },
     { name = "uvicorn" },
 ]
-docling = [
-    { name = "docling", extra = ["easyocr", "tesserocr"], marker = "extra == 'extra-8-glyph-ai-docling'" },
-    { name = "huggingface-hub", version = "1.21.0", source = { registry = "https://pypi.org/simple" }, extra = ["hf-xet"], marker = "extra == 'extra-8-glyph-ai-docling'" },
-    { name = "openai" },
-    { name = "textual" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-]
-
-[package.dev-dependencies]
 dev = [
     { name = "pytest" },
     { name = "ruff" },
 ]
+docling = [
+    { name = "docling", extra = ["easyocr", "tesserocr"], marker = "extra == 'group-8-glyph-ai-docling'" },
+    { name = "huggingface-hub", version = "1.21.0", source = { registry = "https://pypi.org/simple" }, extra = ["hf-xet"], marker = "extra == 'group-8-glyph-ai-docling'" },
+    { name = "openai" },
+    { name = "textual" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+]
 
 [package.metadata]
-requires-dist = [
-    { name = "addict", marker = "extra == 'deepseek2'", specifier = ">=2.4.0" },
-    { name = "docling", extras = ["easyocr", "tesserocr"], marker = "extra == 'docling'", specifier = ">=2.107.0" },
-    { name = "easydict", marker = "extra == 'deepseek2'", specifier = ">=1.13" },
-    { name = "einops", marker = "extra == 'deepseek2'", specifier = ">=0.8.0" },
-    { name = "fastapi", marker = "extra == 'deepseek2'", specifier = ">=0.110" },
-    { name = "huggingface-hub", extras = ["hf-xet"], marker = "extra == 'deepseek2'", specifier = ">=0.32.3" },
-    { name = "huggingface-hub", extras = ["hf-xet"], marker = "extra == 'docling'", specifier = ">=0.32.3" },
-    { name = "matplotlib", marker = "extra == 'deepseek2'", specifier = ">=3.8.0" },
-    { name = "openai", marker = "extra == 'docling'", specifier = ">=1.30.0" },
-    { name = "pillow", marker = "extra == 'deepseek2'", specifier = ">=10.0" },
-    { name = "pydantic-settings", specifier = ">=2.5.0" },
-    { name = "pypdfium2", marker = "extra == 'deepseek2'", specifier = ">=4.30" },
-    { name = "textual", marker = "extra == 'docling'", specifier = ">=0.80" },
-    { name = "torch", marker = "(sys_platform == 'linux' and extra == 'deepseek2') or (sys_platform == 'win32' and extra == 'deepseek2')", specifier = ">=2.7.1", index = "https://download.pytorch.org/whl/cu128" },
-    { name = "torch", marker = "(sys_platform == 'linux' and extra == 'docling') or (sys_platform == 'win32' and extra == 'docling')", specifier = ">=2.7.1", index = "https://download.pytorch.org/whl/cu128" },
-    { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'deepseek2'", specifier = ">=2.7.1" },
-    { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'docling'", specifier = ">=2.7.1" },
-    { name = "torchvision", marker = "(sys_platform == 'linux' and extra == 'deepseek2') or (sys_platform == 'win32' and extra == 'deepseek2')", specifier = ">=0.22.1", index = "https://download.pytorch.org/whl/cu128" },
-    { name = "torchvision", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'deepseek2'", specifier = ">=0.22.1" },
-    { name = "transformers", marker = "extra == 'deepseek2'", specifier = ">=4.46.3,<4.48" },
-    { name = "uvicorn", marker = "extra == 'deepseek2'", specifier = ">=0.29" },
-]
-provides-extras = ["docling", "deepseek2"]
+requires-dist = [{ name = "pydantic-settings", specifier = ">=2.5.0" }]
 
 [package.metadata.requires-dev]
+deepseek2 = [
+    { name = "addict", specifier = ">=2.4.0" },
+    { name = "easydict", specifier = ">=1.13" },
+    { name = "einops", specifier = ">=0.8.0" },
+    { name = "fastapi", specifier = ">=0.110" },
+    { name = "huggingface-hub", extras = ["hf-xet"], specifier = ">=0.32.3" },
+    { name = "matplotlib", specifier = ">=3.8.0" },
+    { name = "pillow", specifier = ">=10.0" },
+    { name = "pypdfium2", specifier = ">=4.30" },
+    { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32'", specifier = ">=2.7.1" },
+    { name = "torch", marker = "sys_platform == 'linux' or sys_platform == 'win32'", specifier = ">=2.7.1", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "torchvision", marker = "sys_platform != 'linux' and sys_platform != 'win32'", specifier = ">=0.22.1" },
+    { name = "torchvision", marker = "sys_platform == 'linux' or sys_platform == 'win32'", specifier = ">=0.22.1", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "transformers", specifier = ">=4.46.3,<4.48" },
+    { name = "uvicorn", specifier = ">=0.29" },
+]
 dev = [
     { name = "pytest", specifier = ">=8.2.0" },
     { name = "ruff", specifier = ">=0.6.0" },
+]
+docling = [
+    { name = "docling", extras = ["easyocr", "tesserocr"], specifier = ">=2.107.0" },
+    { name = "huggingface-hub", extras = ["hf-xet"], specifier = ">=0.32.3" },
+    { name = "openai", specifier = ">=1.30.0" },
+    { name = "textual", specifier = ">=0.80" },
+    { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32'", specifier = ">=2.7.1" },
+    { name = "torch", marker = "sys_platform == 'linux' or sys_platform == 'win32'", specifier = ">=2.7.1", index = "https://download.pytorch.org/whl/cu128" },
 ]
 
 [[package]]
@@ -2005,7 +2004,7 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
@@ -2478,8 +2477,8 @@ wheels = [
 [package.optional-dependencies]
 torch = [
     { name = "numpy" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-docling') or (extra == 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')" },
 ]
 
 [[package]]
@@ -2600,7 +2599,7 @@ name = "semchunk"
 version = "3.2.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "mpire", extra = ["dill"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "mpire", extra = ["dill"], marker = "extra == 'group-8-glyph-ai-docling'" },
     { name = "tqdm" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/a0/ce7e3d6cc76498fd594e667d10a03f17d7cced129e46869daec23523bf5a/semchunk-3.2.5.tar.gz", hash = "sha256:ee15e9a06a69a411937dd8fcf0a25d7ef389c5195863140436872a02c95b0218", size = 17667, upload-time = "2025-10-28T02:12:38.025Z" }
@@ -2760,7 +2759,7 @@ name = "textual"
 version = "8.2.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "markdown-it-py", extra = ["linkify"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "markdown-it-py", extra = ["linkify"], marker = "extra == 'group-8-glyph-ai-docling'" },
     { name = "mdit-py-plugins" },
     { name = "platformdirs" },
     { name = "pygments" },
@@ -2854,11 +2853,11 @@ name = "torch"
 version = "2.7.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling'",
 ]
 dependencies = [
     { name = "filelock", marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
@@ -2885,11 +2884,11 @@ name = "torch"
 version = "2.7.1+cu128"
 source = { registry = "https://download.pytorch.org/whl/cu128" }
 resolution-markers = [
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
-    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
-    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling')",
-    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')",
+    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')",
+    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling')",
+    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling'",
 ]
 dependencies = [
     { name = "filelock", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -2946,11 +2945,11 @@ name = "torchvision"
 version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
-    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling'",
+    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling'",
 ]
 dependencies = [
     { name = "numpy", marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
@@ -2973,9 +2972,9 @@ name = "torchvision"
 version = "0.22.1+cu128"
 source = { registry = "https://download.pytorch.org/whl/cu128" }
 resolution-markers = [
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
-    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling')",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')",
+    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'group-8-glyph-ai-deepseek2' and extra == 'group-8-glyph-ai-docling')",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'group-8-glyph-ai-deepseek2' and extra != 'group-8-glyph-ai-docling')",
 ]
 dependencies = [
     { name = "numpy", marker = "(python_full_version >= '3.14' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or sys_platform == 'win32'" },

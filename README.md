@@ -95,7 +95,7 @@ It ships as a **separate image** (`Dockerfile.deepseek2`, compose service
 `deepseek2`, profile `deepseek2`) because its remote code needs
 `transformers <4.48` (`LlamaFlashAttention2`), which conflicts with docling 2.10x
 (needs transformers 5, `rt_detr_v2`). The two can't share a venv, so each lives
-in its own uv extra (`glyph[docling]` vs `glyph[deepseek2]`).
+in its own uv dependency group (`docling` default vs `deepseek2`).
 
 In `.env`:
 
@@ -121,11 +121,11 @@ curl -s -XPOST localhost:8001/ocr -H 'content-type: application/json' \
      -d '{"image_b64":"<base64 png>"}'                      # -> {"markdown": "..."}
 ```
 
-Locally (its own extra; do **not** mix with the docling extra):
+Locally (its own group; do **not** mix with docling):
 
 ```bash
-uv sync --extra deepseek2
-uv run --extra deepseek2 glyph extract livro.pdf
+uv sync --no-group docling --group deepseek2
+uv run --no-group docling --group deepseek2 glyph extract livro.pdf
 ```
 
 > ⚠️ vLLM doesn't yet serve DeepSeek-OCR-2 on CUDA (`DeepseekOCR2ForCausalLM`
@@ -179,24 +179,23 @@ avoid contention, e.g. set `device_ids: ['0']` on `deepseek-ocr` and `['1']` on
 
 ## Option B — Local with uv + venv
 
-The OCR engines live in **mutually-exclusive extras** — install one:
-
-- `--extra docling` → `easyocr` / `tesseract` / `none` / `vlm` engines
-- `--extra deepseek2` → the `deepseek2` engine (separate transformers)
+The OCR engines are **mutually-exclusive dependency groups**: `docling`
+(easyocr/tesseract/none/vlm + the TUI) is **installed by default**, `deepseek2`
+is opt-in.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh   # install uv (once)
-uv sync --extra docling                            # build .venv (docling engines)
+uv sync                                            # build .venv (docling, default)
 cp .env.example .env                               # set OCR_ENGINE / OCR_LANGUAGES
 
-uv run --extra docling glyph extract livro.pdf # writes livro.md
+uv run glyph extract livro.pdf                     # writes livro.md (no flag)
 ```
 
-For DeepSeek-OCR-2, swap the extra (don't mix the two in one venv):
+For DeepSeek-OCR-2, switch groups (don't mix the two in one venv):
 
 ```bash
-uv sync --extra deepseek2
-uv run --extra deepseek2 glyph extract livro.pdf
+uv sync --no-group docling --group deepseek2
+uv run --no-group docling --group deepseek2 glyph extract livro.pdf
 ```
 
 Prefer an activated shell? That works too:
@@ -229,9 +228,9 @@ Dockerfile           # docling image (easyocr/tesseract/vlm)
 Dockerfile.deepseek2 # DeepSeek-OCR-2 image (separate transformers)
 ```
 
-The OCR engines live in two **mutually-exclusive** uv extras — `docling`
-(transformers 5) and `deepseek2` (transformers <4.48) — declared as conflicting
-in `pyproject.toml`, so they never share a venv.
+The OCR engines live in two **mutually-exclusive** uv dependency groups —
+`docling` (transformers 5, default) and `deepseek2` (transformers <4.48) —
+declared as conflicting in `pyproject.toml`, so they never share a venv.
 
 ## Requirements
 

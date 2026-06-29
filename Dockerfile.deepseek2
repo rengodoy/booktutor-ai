@@ -21,10 +21,10 @@ WORKDIR /app
 
 # Install the deepseek2 extra first (better layer caching), then the project.
 COPY pyproject.toml uv.lock README.md .python-version ./
-RUN uv sync --frozen --no-install-project --no-dev --extra deepseek2
+RUN uv sync --frozen --no-install-project --no-dev --no-group docling --group deepseek2
 
 COPY . .
-RUN uv sync --frozen --no-dev --extra deepseek2
+RUN uv sync --frozen --no-dev --no-group docling --group deepseek2
 
 # Default: run the OCR HTTP server (used as a `merge` source tier). For a one-off
 # CLI extract, override the command:

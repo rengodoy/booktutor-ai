@@ -30,10 +30,10 @@ WORKDIR /app
 # Install dependencies first (better layer caching), then the project.
 # .python-version pins CPython 3.13 (faiss-cpu has no 3.14 wheel yet).
 COPY pyproject.toml uv.lock README.md .python-version ./
-RUN uv sync --frozen --no-install-project --no-dev --extra docling
+RUN uv sync --frozen --no-install-project --no-dev
 
 COPY . .
-RUN uv sync --frozen --no-dev --extra docling
+RUN uv sync --frozen --no-dev
 
 ENTRYPOINT ["glyph"]
 CMD ["--help"]
