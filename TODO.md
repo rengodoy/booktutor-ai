@@ -76,8 +76,11 @@ Verificação: screenshots headless (run_test + save_screenshot → SVG → PNG 
       2×2 + switches + strategy), Process (barras + log), Compare (3 colunas +
       merge), Markdown (tabs + source/rendered), Export (radioset/switches/CTA).
       Validadas por screenshot; nav (ListView) troca a view. Layout B: pendente/opcional.
-- [ ] 3c: ligar ao OCR real (Input escolhe PDFs, Engines→Settings, Process roda
-      extração com progresso ao vivo via workers, Markdown preview, Export grava).
+- [x] 3c: ligado ao OCR real — Input escolhe PDFs (DirectoryTree), Engines→Settings
+      (RadioSet ACTIVE ENGINE), `r` roda extração num worker async (load() via
+      asyncio.to_thread, progresso ao vivo no Process), Markdown mostra o `.md`
+      gerado, `e`/Export grava. Validado headless: onepage.pdf + `none` → 2149
+      chars → Markdown → export OK. (Layout B do dashboard segue opcional/pendente.)
 
 ## Questões em aberto
 - Renomear o projeto de `booktutor` para `glyph`? (o design já usa o nome `glyph`)
