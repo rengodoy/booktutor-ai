@@ -273,7 +273,7 @@ class DeepSeekOcr2Loader:
 
     The remote code needs ``transformers <4.48`` (``LlamaFlashAttention2``),
     which conflicts with docling 2.10x (transformers 5). This engine therefore
-    ships in its own ``booktutor[deepseek2]`` extra / image, never the docling
+    ships in its own ``glyph[deepseek2]`` extra / image, never the docling
     one. ``infer`` streams to stdout and writes the cleaned markdown to
     ``<output_path>/result.mmd``; we read that.
     """

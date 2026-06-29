@@ -28,16 +28,16 @@ from textual.widgets import (
     Static,
 )
 
-from booktutor.config import Settings
-from booktutor.loaders import make_loader
-from booktutor.tui.screens.compare import CompareView
-from booktutor.tui.screens.dashboard import DashboardView
-from booktutor.tui.screens.engines import EnginesView
-from booktutor.tui.screens.export import ExportView
-from booktutor.tui.screens.input import InputView
-from booktutor.tui.screens.markdown import MarkdownView
-from booktutor.tui.screens.process import ProcessView
-from booktutor.tui.themes import THEMES
+from glyph.config import Settings
+from glyph.loaders import make_loader
+from glyph.tui.screens.compare import CompareView
+from glyph.tui.screens.dashboard import DashboardView
+from glyph.tui.screens.engines import EnginesView
+from glyph.tui.screens.export import ExportView
+from glyph.tui.screens.input import InputView
+from glyph.tui.screens.markdown import MarkdownView
+from glyph.tui.screens.process import ProcessView
+from glyph.tui.themes import THEMES
 
 # (view id, sidebar label, header subtitle)
 NAV = [

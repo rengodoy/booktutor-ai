@@ -1,5 +1,5 @@
-from booktutor.config import Settings
-from booktutor.loaders import (
+from glyph.config import Settings
+from glyph.loaders import (
     DeepSeekOcr2Loader,
     DoclingBookLoader,
     MergeOcrLoader,
@@ -98,7 +98,7 @@ def test_parse_reconcile_garbage_falls_back():
 
 def test_tesseract_lang_mapping():
     # easyocr codes (pt,en) map to tesseract codes (por,eng) in the converter.
-    from booktutor.loaders import _TESSERACT_LANG
+    from glyph.loaders import _TESSERACT_LANG
 
     assert _TESSERACT_LANG["pt"] == "por"
     assert _TESSERACT_LANG["en"] == "eng"

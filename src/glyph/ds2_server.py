@@ -7,7 +7,7 @@ tier without the conflict. The heavy model loads once at startup.
 
 Run it (in the deepseek2 extra / image):
 
-    booktutor-deepseek2-server          # uvicorn on DS2_SERVER_HOST:DS2_SERVER_PORT
+    glyph-deepseek2-server          # uvicorn on DS2_SERVER_HOST:DS2_SERVER_PORT
 
 Endpoints:
     GET  /health -> {"status": "ok", "model": "<id>"}
@@ -24,7 +24,7 @@ import tempfile
 
 from pydantic import BaseModel
 
-from booktutor.config import Settings
+from glyph.config import Settings
 
 
 class OcrRequest(BaseModel):
@@ -43,7 +43,7 @@ def create_app():
     """Build the FastAPI app, loading the model once at import/startup."""
     from fastapi import FastAPI, HTTPException
 
-    from booktutor.loaders import deepseek2_ocr_image, load_deepseek2_model
+    from glyph.loaders import deepseek2_ocr_image, load_deepseek2_model
 
     settings = Settings()
 
@@ -53,7 +53,7 @@ def create_app():
     model, tokenizer = load_deepseek2_model(settings.ds2_model, settings.ds2_attn_impl)
     print("✅ Model loaded; server ready.")
 
-    app = FastAPI(title="booktutor DeepSeek-OCR-2", version="1.0")
+    app = FastAPI(title="glyph DeepSeek-OCR-2", version="1.0")
 
     @app.get("/health")
     def health() -> dict:

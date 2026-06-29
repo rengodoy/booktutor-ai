@@ -1,4 +1,4 @@
-from booktutor.config import Settings
+from glyph.config import Settings
 
 
 def test_ocr_defaults():

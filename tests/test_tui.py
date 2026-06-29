@@ -2,8 +2,8 @@ import pytest
 
 pytest.importorskip("textual")  # TUI ships in the docling extra
 
-from booktutor.tui.app import NAV  # noqa: E402
-from booktutor.tui.themes import THEMES  # noqa: E402
+from glyph.tui.app import NAV  # noqa: E402
+from glyph.tui.themes import THEMES  # noqa: E402
 
 
 def test_nav_structure():

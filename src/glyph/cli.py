@@ -7,7 +7,7 @@ import os
 import sys
 from pathlib import Path
 
-from booktutor.config import Settings
+from glyph.config import Settings
 
 
 def _check_files_exist(paths: list[str]) -> bool:
@@ -18,7 +18,7 @@ def _check_files_exist(paths: list[str]) -> bool:
 
 
 def cmd_tui(args: argparse.Namespace, settings: Settings) -> int:
-    from booktutor.tui.app import GlyphApp
+    from glyph.tui.app import GlyphApp
 
     GlyphApp().run()
     return 0
@@ -27,7 +27,7 @@ def cmd_tui(args: argparse.Namespace, settings: Settings) -> int:
 def cmd_extract(args: argparse.Namespace, settings: Settings) -> int:
     if not _check_files_exist([args.source]):
         return 1
-    from booktutor.loaders import make_loader
+    from glyph.loaders import make_loader
 
     loader = make_loader(settings, args.source)
     text = loader.load()
@@ -40,7 +40,7 @@ def cmd_extract(args: argparse.Namespace, settings: Settings) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="booktutor",
+        prog="glyph",
         description="OCR a PDF into a Markdown file.",
     )
     sub = parser.add_subparsers(dest="command", required=True)

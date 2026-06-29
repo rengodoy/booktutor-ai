@@ -34,7 +34,7 @@
 - [x] Deps: `transformers`, `einops`, `addict`, `easydict` (flash-attn opcional)
 - [x] **Validado end-to-end na GPU**: OCR-2 conflita com docling no mesmo venv
       (transformers <4.48 vs 5). Resolvido com extras mutuamente exclusivos
-      (`booktutor[docling]` vs `booktutor[deepseek2]` via `[tool.uv] conflicts`)
+      (`glyph[docling]` vs `glyph[deepseek2]` via `[tool.uv] conflicts`)
       + imagem própria `Dockerfile.deepseek2` (serviço/profile `deepseek2`).
       Rodou em transformers 4.47.1: páginas reais → markdown limpo (PT, headings).
       Loader lê `result.mmd` (`save_results=True`).
@@ -50,7 +50,7 @@ sempre lê a imagem da página. `OCR_ENGINE=merge`. Endpoint reconciliador: a de
       `qwen-27b` (llama-swap @127.0.0.1:8080): páginas reais → markdown PT limpo,
       conf 0.95; o reconciliador faz OCR da imagem mesmo com candidato vazio.
 - [x] 2c-2: deepseek2 exposto como serviço HTTP de OCR
-      (`booktutor-deepseek2-server`, FastAPI/uvicorn, `POST /ocr` → markdown,
+      (`glyph-deepseek2-server`, FastAPI/uvicorn, `POST /ocr` → markdown,
       modelo carrega 1x). Helpers `load_deepseek2_model`/`deepseek2_ocr_image`
       reusados pelo loader. Dockerfile.deepseek2 roda o servidor (porta 8001),
       compose com porta+healthcheck. **Validado**: health OK + OCR de página real
@@ -67,7 +67,7 @@ sempre lê a imagem da página. `OCR_ENGINE=merge`. Endpoint reconciliador: a de
 
 ## 3. TUI (glyph)
 Implementar a TUI de `design_handoff_glyph_tui/README.md` com Textual.
-Abordagem: shell fiel primeiro (mock), depois liga ao OCR. Entry: `booktutor tui`.
+Abordagem: shell fiel primeiro (mock), depois liga ao OCR. Entry: `glyph tui`.
 Verificação: screenshots headless (run_test + save_screenshot → SVG → PNG via cairosvg).
 - [x] 3a: esqueleto — app + 2 temas (Midnight/Ember, toggle `t`) + frame (header
       custom, sidebar PIPELINE, footer bilíngue) + ContentSwitcher + Dashboard
@@ -83,4 +83,6 @@ Verificação: screenshots headless (run_test + save_screenshot → SVG → PNG 
       chars → Markdown → export OK. (Layout B do dashboard segue opcional/pendente.)
 
 ## Questões em aberto
-- Renomear o projeto de `booktutor` para `glyph`? (o design já usa o nome `glyph`)
+- [x] Renomear o projeto `booktutor` → `glyph` (pacote `src/glyph`, comandos
+      `glyph` / `glyph-deepseek2-server`, imagens `rengodoy/glyph-*`).
+- [ ] Layout B do dashboard (variante alternativa) — opcional.

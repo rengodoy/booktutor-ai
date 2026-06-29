@@ -35,5 +35,5 @@ RUN uv sync --frozen --no-install-project --no-dev --extra docling
 COPY . .
 RUN uv sync --frozen --no-dev --extra docling
 
-ENTRYPOINT ["booktutor"]
+ENTRYPOINT ["glyph"]
 CMD ["--help"]

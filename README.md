@@ -1,4 +1,4 @@
-# BookTutor — PDF → Markdown OCR
+# Glyph — PDF → Markdown OCR
 
 OCR any PDF (scanned or text-layer) into clean **Markdown**. It runs `docling`
 with a choice of OCR engines — **EasyOCR**, **Tesseract**, or a vision model
@@ -11,8 +11,8 @@ with a choice of OCR engines — **EasyOCR**, **Tesseract**, or a vision model
 `extract` converts a PDF to Markdown using the engine selected by `OCR_ENGINE`:
 
 ```bash
-booktutor extract livro.pdf            # writes livro.md
-booktutor extract livro.pdf -o out.md  # custom output path
+glyph extract livro.pdf            # writes livro.md
+glyph extract livro.pdf -o out.md  # custom output path
 ```
 
 ## OCR engines (`OCR_ENGINE`)
@@ -58,7 +58,7 @@ docker compose build   # builds the docling image (easyocr/tesseract/vlm)
 Set `OCR_ENGINE=tesseract` and `OCR_LANGUAGES=pt,en` in `.env`, then:
 
 ```bash
-docker compose run --rm booktutor extract books/livro.pdf
+docker compose run --rm glyph extract books/livro.pdf
 ```
 
 ### VLM OCR (DeepSeek-OCR via vLLM)
@@ -77,7 +77,7 @@ VLM_OCR_MODEL=unsloth/DeepSeek-OCR
 docker compose --profile vlm up -d deepseek-ocr
 
 # 2. extract through it
-docker compose run --rm booktutor extract books/livro.pdf
+docker compose run --rm glyph extract books/livro.pdf
 ```
 
 > ⚠️ DeepSeek-OCR needs a recent/nightly vLLM. If the model fails to load,
@@ -95,7 +95,7 @@ It ships as a **separate image** (`Dockerfile.deepseek2`, compose service
 `deepseek2`, profile `deepseek2`) because its remote code needs
 `transformers <4.48` (`LlamaFlashAttention2`), which conflicts with docling 2.10x
 (needs transformers 5, `rt_detr_v2`). The two can't share a venv, so each lives
-in its own uv extra (`booktutor[docling]` vs `booktutor[deepseek2]`).
+in its own uv extra (`glyph[docling]` vs `glyph[deepseek2]`).
 
 In `.env`:
 
@@ -108,11 +108,11 @@ DS2_ATTN_IMPL=eager                    # "flash_attention_2" is faster but needs
 ```bash
 docker compose --profile deepseek2 build deepseek2
 # one-off CLI extract (override the default command):
-docker compose --profile deepseek2 run --rm deepseek2 booktutor extract books/livro.pdf
+docker compose --profile deepseek2 run --rm deepseek2 glyph extract books/livro.pdf
 ```
 
 The `deepseek2` image also runs an **HTTP OCR server** (its default command,
-`booktutor-deepseek2-server`, on port 8001) so the `merge` engine can use
+`glyph-deepseek2-server`, on port 8001) so the `merge` engine can use
 DeepSeek-OCR-2 as a source tier without the venv conflict:
 
 ```bash
@@ -125,7 +125,7 @@ Locally (its own extra; do **not** mix with the docling extra):
 
 ```bash
 uv sync --extra deepseek2
-uv run --extra deepseek2 booktutor extract livro.pdf
+uv run --extra deepseek2 glyph extract livro.pdf
 ```
 
 > ⚠️ vLLM doesn't yet serve DeepSeek-OCR-2 on CUDA (`DeepseekOCR2ForCausalLM`
@@ -172,7 +172,7 @@ docker compose --profile deepseek2 up -d deepseek2     # MERGE_DEEPSEEK2_URL=htt
 (e.g. an RTX 5080 or RTX 2000 Ada), single GPU, no tensor-parallel. With two
 GPUs, pin the OCR server to one and leave the other for the app (docling) to
 avoid contention, e.g. set `device_ids: ['0']` on `deepseek-ocr` and `['1']` on
-`booktutor` in `docker-compose.yaml` (replacing `count: all`). Drop the
+`glyph` in `docker-compose.yaml` (replacing `count: all`). Drop the
 `deploy.resources` block entirely to run CPU-only (much slower).
 
 ---
@@ -189,22 +189,22 @@ curl -LsSf https://astral.sh/uv/install.sh | sh   # install uv (once)
 uv sync --extra docling                            # build .venv (docling engines)
 cp .env.example .env                               # set OCR_ENGINE / OCR_LANGUAGES
 
-uv run --extra docling booktutor extract livro.pdf # writes livro.md
+uv run --extra docling glyph extract livro.pdf # writes livro.md
 ```
 
 For DeepSeek-OCR-2, swap the extra (don't mix the two in one venv):
 
 ```bash
 uv sync --extra deepseek2
-uv run --extra deepseek2 booktutor extract livro.pdf
+uv run --extra deepseek2 glyph extract livro.pdf
 ```
 
 Prefer an activated shell? That works too:
 
 ```bash
 source .venv/bin/activate
-booktutor extract livro.pdf
-python -m booktutor extract livro.pdf   # equivalent module form
+glyph extract livro.pdf
+python -m glyph extract livro.pdf   # equivalent module form
 deactivate
 ```
 
@@ -220,7 +220,7 @@ uv run ruff check    # lint
 ## Project layout
 
 ```
-src/booktutor/
+src/glyph/
 ├── config.py        # Settings from env / .env (pydantic-settings)
 ├── loaders.py       # make_loader(): docling / VLM / DeepSeek-OCR-2
 └── cli.py           # extract

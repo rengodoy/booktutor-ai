@@ -1,5 +1,5 @@
 [project]
-name = "booktutor-ai"
+name = "glyph-ai"
 version = "0.3.0"
 description = "OCR any PDF into high-quality Markdown (docling / DeepSeek-OCR)."
 readme = "README.md"
@@ -21,7 +21,7 @@ docling = [
     "huggingface-hub[hf-xet]>=0.32.3",
     "openai>=1.30.0",
     "torch>=2.7.1",
-    "textual>=0.80",          # glyph TUI (booktutor tui)
+    "textual>=0.80",          # glyph TUI (glyph tui)
 ]
 # DeepSeek-OCR-2 in-process via transformers (trust_remote_code). No docling.
 # flash-attn is optional (set DS2_ATTN_IMPL=flash_attention_2 if installed).
@@ -41,8 +41,8 @@ deepseek2 = [
 ]
 
 [project.scripts]
-booktutor = "booktutor.cli:main"
-booktutor-deepseek2-server = "booktutor.ds2_server:main"
+glyph = "glyph.cli:main"
+glyph-deepseek2-server = "glyph.ds2_server:main"
 
 [dependency-groups]
 dev = [
@@ -55,7 +55,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/booktutor"]
+packages = ["src/glyph"]
 
 [tool.uv]
 # docling and deepseek2 pull incompatible transformers majors; mark them as

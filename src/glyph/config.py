@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     # "eager" runs anywhere; "flash_attention_2" is faster but needs flash-attn.
     ds2_attn_impl: str = Field(default="eager")
     ds2_dpi: int = Field(default=144)
-    # Standalone DeepSeek-OCR-2 HTTP server (booktutor-deepseek2-server). Lets
+    # Standalone DeepSeek-OCR-2 HTTP server (glyph-deepseek2-server). Lets
     # the merge engine use deepseek2 as a source without the venv conflict.
     ds2_server_host: str = Field(default="0.0.0.0")
     ds2_server_port: int = Field(default=8001)
@@ -78,7 +78,7 @@ class Settings(BaseSettings):
     merge_dpi: int = Field(default=144)
     merge_min_confidence: float = Field(default=0.85)
     # The "deepseek2" source tier calls the standalone DeepSeek-OCR-2 HTTP server
-    # (booktutor-deepseek2-server / compose service `deepseek2`). Empty/down ->
+    # (glyph-deepseek2-server / compose service `deepseek2`). Empty/down ->
     # that candidate is skipped (the run continues with the other engines).
     merge_deepseek2_url: str = Field(default="http://127.0.0.1:8001")
 

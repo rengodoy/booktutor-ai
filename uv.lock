@@ -2,21 +2,21 @@ version = 1
 revision = 3
 requires-python = ">=3.13"
 resolution-markers = [
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')",
-    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')",
-    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling')",
-    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling'",
-    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling'",
-    "extra != 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling'",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
+    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
+    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling')",
+    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
+    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
+    "extra != 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
 ]
 conflicts = [[
-    { package = "booktutor-ai", extra = "deepseek2" },
-    { package = "booktutor-ai", extra = "docling" },
+    { package = "glyph-ai", extra = "deepseek2" },
+    { package = "glyph-ai", extra = "docling" },
 ]]
 
 [manifest]
@@ -38,8 +38,8 @@ dependencies = [
     { name = "psutil" },
     { name = "pyyaml" },
     { name = "safetensors" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/8d/75/94cd5d389649578aca399e5aa822637eec18319a1dadc400ffe2f9a7493f/accelerate-1.14.0.tar.gz", hash = "sha256:41b9c4377a54e0b460a959b0defa1b736e4ca0a2373252d9a539964c2afe3c8d", size = 412167, upload-time = "2026-06-11T13:45:52.326Z" }
 wheels = [
@@ -111,79 +111,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/43/65/318323f98dbee45d42dff61d8f047181bc6f2268a9068cfad035a46be5af/beautifulsoup4-4.15.0.tar.gz", hash = "sha256:288e3ca7d54b06f2ac191970bc275c1939cb46d450b255bf6718b04aa37ab4f7", size = 632571, upload-time = "2026-06-07T16:44:20.453Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/88/c6/92fcd42f1ba33e1184263f25bfabf3d27c383410470f169e4b8163bf9c17/beautifulsoup4-4.15.0-py3-none-any.whl", hash = "sha256:d6f88de62e1d4e38ecb1077eb9724cd0eff29d2a08ca16a401e9b9e93f117cf9", size = 109924, upload-time = "2026-06-07T16:44:21.566Z" },
-]
-
-[[package]]
-name = "booktutor-ai"
-version = "0.3.0"
-source = { editable = "." }
-dependencies = [
-    { name = "pydantic-settings" },
-]
-
-[package.optional-dependencies]
-deepseek2 = [
-    { name = "addict" },
-    { name = "easydict" },
-    { name = "einops" },
-    { name = "fastapi" },
-    { name = "huggingface-hub", version = "0.36.2", source = { registry = "https://pypi.org/simple" }, extra = ["hf-xet"], marker = "extra == 'extra-12-booktutor-ai-deepseek2'" },
-    { name = "matplotlib" },
-    { name = "pillow" },
-    { name = "pypdfium2" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-deepseek2') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2') or (python_full_version >= '3.14' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform != 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-deepseek2') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2') or (sys_platform != 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "transformers", version = "4.47.1", source = { registry = "https://pypi.org/simple" } },
-    { name = "uvicorn" },
-]
-docling = [
-    { name = "docling", extra = ["easyocr", "tesserocr"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
-    { name = "huggingface-hub", version = "1.21.0", source = { registry = "https://pypi.org/simple" }, extra = ["hf-xet"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
-    { name = "openai" },
-    { name = "textual" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "addict", marker = "extra == 'deepseek2'", specifier = ">=2.4.0" },
-    { name = "docling", extras = ["easyocr", "tesserocr"], marker = "extra == 'docling'", specifier = ">=2.107.0" },
-    { name = "easydict", marker = "extra == 'deepseek2'", specifier = ">=1.13" },
-    { name = "einops", marker = "extra == 'deepseek2'", specifier = ">=0.8.0" },
-    { name = "fastapi", marker = "extra == 'deepseek2'", specifier = ">=0.110" },
-    { name = "huggingface-hub", extras = ["hf-xet"], marker = "extra == 'deepseek2'", specifier = ">=0.32.3" },
-    { name = "huggingface-hub", extras = ["hf-xet"], marker = "extra == 'docling'", specifier = ">=0.32.3" },
-    { name = "matplotlib", marker = "extra == 'deepseek2'", specifier = ">=3.8.0" },
-    { name = "openai", marker = "extra == 'docling'", specifier = ">=1.30.0" },
-    { name = "pillow", marker = "extra == 'deepseek2'", specifier = ">=10.0" },
-    { name = "pydantic-settings", specifier = ">=2.5.0" },
-    { name = "pypdfium2", marker = "extra == 'deepseek2'", specifier = ">=4.30" },
-    { name = "textual", marker = "extra == 'docling'", specifier = ">=0.80" },
-    { name = "torch", marker = "(sys_platform == 'linux' and extra == 'deepseek2') or (sys_platform == 'win32' and extra == 'deepseek2')", specifier = ">=2.7.1", index = "https://download.pytorch.org/whl/cu128" },
-    { name = "torch", marker = "(sys_platform == 'linux' and extra == 'docling') or (sys_platform == 'win32' and extra == 'docling')", specifier = ">=2.7.1", index = "https://download.pytorch.org/whl/cu128" },
-    { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'deepseek2'", specifier = ">=2.7.1" },
-    { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'docling'", specifier = ">=2.7.1" },
-    { name = "torchvision", marker = "(sys_platform == 'linux' and extra == 'deepseek2') or (sys_platform == 'win32' and extra == 'deepseek2')", specifier = ">=0.22.1", index = "https://download.pytorch.org/whl/cu128" },
-    { name = "torchvision", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'deepseek2'", specifier = ">=0.22.1" },
-    { name = "transformers", marker = "extra == 'deepseek2'", specifier = ">=4.46.3,<4.48" },
-    { name = "uvicorn", marker = "extra == 'deepseek2'", specifier = ">=0.29" },
-]
-provides-extras = ["docling", "deepseek2"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = ">=8.2.0" },
-    { name = "ruff", specifier = ">=0.6.0" },
 ]
 
 [[package]]
@@ -418,7 +345,7 @@ name = "docling"
 version = "2.107.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "docling-slim", extra = ["standard"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
+    { name = "docling-slim", extra = ["standard"], marker = "extra == 'extra-8-glyph-ai-docling'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5e/b3/c0563269a680c4f3cf2b5814b8a2cb7e490d26343a25834124808896d1b3/docling-2.107.0.tar.gz", hash = "sha256:cabd688c00681361d13ccf00d802e4ef4e0514fcf6e9088709d58c10fbef08c1", size = 8946, upload-time = "2026-06-24T13:13:21.841Z" }
 wheels = [
@@ -427,10 +354,10 @@ wheels = [
 
 [package.optional-dependencies]
 easyocr = [
-    { name = "docling-slim", extra = ["feat-ocr-easyocr"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
+    { name = "docling-slim", extra = ["feat-ocr-easyocr"], marker = "extra == 'extra-8-glyph-ai-docling'" },
 ]
 tesserocr = [
-    { name = "docling-slim", extra = ["feat-ocr-tesserocr"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
+    { name = "docling-slim", extra = ["feat-ocr-tesserocr"], marker = "extra == 'extra-8-glyph-ai-docling'" },
 ]
 
 [[package]]
@@ -460,8 +387,8 @@ wheels = [
 [package.optional-dependencies]
 chunking = [
     { name = "semchunk" },
-    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "transformers", version = "5.12.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
+    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "transformers", version = "5.12.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
     { name = "tree-sitter" },
     { name = "tree-sitter-c" },
     { name = "tree-sitter-javascript" },
@@ -482,15 +409,15 @@ dependencies = [
     { name = "pillow" },
     { name = "pydantic" },
     { name = "rtree" },
-    { name = "safetensors", extra = ["torch"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform != 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform != 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
+    { name = "safetensors", extra = ["torch"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
     { name = "tqdm" },
-    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "transformers", version = "5.12.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
+    { name = "transformers", version = "5.8.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform == 'darwin' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "transformers", version = "5.12.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'darwin' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/37/2b/c0ad433da1210672d6e8e774f1ba601824e0d23153e8cd963521dcf1c28c/docling_ibm_models-3.13.3.tar.gz", hash = "sha256:8c8b55e80b3d20fc74d85ca49a4d064578ef75b9f7251eec42fc9df6af426218", size = 98768, upload-time = "2026-06-04T08:23:08.088Z" }
 wheels = [
@@ -551,7 +478,7 @@ standard = [
     { name = "accelerate" },
     { name = "beautifulsoup4" },
     { name = "defusedxml" },
-    { name = "docling-core", extra = ["chunking"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
+    { name = "docling-core", extra = ["chunking"], marker = "extra == 'extra-8-glyph-ai-docling'" },
     { name = "docling-ibm-models" },
     { name = "docling-parse" },
     { name = "httpx" },
@@ -572,11 +499,11 @@ standard = [
     { name = "rich" },
     { name = "rtree" },
     { name = "scipy" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform != 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform != 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
     { name = "typer" },
     { name = "websockets" },
 ]
@@ -605,11 +532,11 @@ dependencies = [
     { name = "scikit-image" },
     { name = "scipy" },
     { name = "shapely" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform != 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform != 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bb/84/4a2cab0e6adde6a85e7ba543862e5fc0250c51f3ac721a078a55cdcff250/easyocr-1.7.2-py3-none-any.whl", hash = "sha256:5be12f9b0e595d443c9c3d10b0542074b50f0ec2d98b141a109cd961fd1c177c", size = 2870178, upload-time = "2024-09-24T11:34:43.554Z" },
@@ -719,6 +646,79 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/10/a1/ae4e3e5003468d6391d2c77b6fa1cd73bd5d13511d81c642d7b28ac90ed4/fsspec-2026.6.0.tar.gz", hash = "sha256:f5bac145310fe30e16e1471bd6840b2d990d609e872251d7e674241822abf01a", size = 313646, upload-time = "2026-06-16T01:57:28.105Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e5/22/4222d7ddf3da30f363edaa98e329c2bce6c65497c9cb2810931c8b2c0fbc/fsspec-2026.6.0-py3-none-any.whl", hash = "sha256:02e0b71817df9b2169dc30a16832045764def1191b43dcff5bb85bdee212d2a1", size = 203949, upload-time = "2026-06-16T01:57:26.358Z" },
+]
+
+[[package]]
+name = "glyph-ai"
+version = "0.3.0"
+source = { editable = "." }
+dependencies = [
+    { name = "pydantic-settings" },
+]
+
+[package.optional-dependencies]
+deepseek2 = [
+    { name = "addict" },
+    { name = "easydict" },
+    { name = "einops" },
+    { name = "fastapi" },
+    { name = "huggingface-hub", version = "0.36.2", source = { registry = "https://pypi.org/simple" }, extra = ["hf-xet"], marker = "extra == 'extra-8-glyph-ai-deepseek2'" },
+    { name = "matplotlib" },
+    { name = "pillow" },
+    { name = "pypdfium2" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (python_full_version >= '3.14' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torchvision", version = "0.22.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2') or (sys_platform != 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "transformers", version = "4.47.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "uvicorn" },
+]
+docling = [
+    { name = "docling", extra = ["easyocr", "tesserocr"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "huggingface-hub", version = "1.21.0", source = { registry = "https://pypi.org/simple" }, extra = ["hf-xet"], marker = "extra == 'extra-8-glyph-ai-docling'" },
+    { name = "openai" },
+    { name = "textual" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "addict", marker = "extra == 'deepseek2'", specifier = ">=2.4.0" },
+    { name = "docling", extras = ["easyocr", "tesserocr"], marker = "extra == 'docling'", specifier = ">=2.107.0" },
+    { name = "easydict", marker = "extra == 'deepseek2'", specifier = ">=1.13" },
+    { name = "einops", marker = "extra == 'deepseek2'", specifier = ">=0.8.0" },
+    { name = "fastapi", marker = "extra == 'deepseek2'", specifier = ">=0.110" },
+    { name = "huggingface-hub", extras = ["hf-xet"], marker = "extra == 'deepseek2'", specifier = ">=0.32.3" },
+    { name = "huggingface-hub", extras = ["hf-xet"], marker = "extra == 'docling'", specifier = ">=0.32.3" },
+    { name = "matplotlib", marker = "extra == 'deepseek2'", specifier = ">=3.8.0" },
+    { name = "openai", marker = "extra == 'docling'", specifier = ">=1.30.0" },
+    { name = "pillow", marker = "extra == 'deepseek2'", specifier = ">=10.0" },
+    { name = "pydantic-settings", specifier = ">=2.5.0" },
+    { name = "pypdfium2", marker = "extra == 'deepseek2'", specifier = ">=4.30" },
+    { name = "textual", marker = "extra == 'docling'", specifier = ">=0.80" },
+    { name = "torch", marker = "(sys_platform == 'linux' and extra == 'deepseek2') or (sys_platform == 'win32' and extra == 'deepseek2')", specifier = ">=2.7.1", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "torch", marker = "(sys_platform == 'linux' and extra == 'docling') or (sys_platform == 'win32' and extra == 'docling')", specifier = ">=2.7.1", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'deepseek2'", specifier = ">=2.7.1" },
+    { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'docling'", specifier = ">=2.7.1" },
+    { name = "torchvision", marker = "(sys_platform == 'linux' and extra == 'deepseek2') or (sys_platform == 'win32' and extra == 'deepseek2')", specifier = ">=0.22.1", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "torchvision", marker = "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'deepseek2'", specifier = ">=0.22.1" },
+    { name = "transformers", marker = "extra == 'deepseek2'", specifier = ">=4.46.3,<4.48" },
+    { name = "uvicorn", marker = "extra == 'deepseek2'", specifier = ">=0.29" },
+]
+provides-extras = ["docling", "deepseek2"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=8.2.0" },
+    { name = "ruff", specifier = ">=0.6.0" },
 ]
 
 [[package]]
@@ -1481,7 +1481,7 @@ name = "nvidia-cudnn-cu12"
 version = "9.7.1.26"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas-cu12", marker = "(python_full_version >= '3.14' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "nvidia-cublas-cu12", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c1/2e/ec5dda717eeb1de3afbbbb611ca556f9d6d057470759c6abd36d72f0063b/nvidia_cudnn_cu12-9.7.1.26-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:848a61d40ef3b32bd4e1fadb599f0cf04a4b942fbe5fb3be572ad75f9b8c53ef", size = 725862213, upload-time = "2025-02-06T22:14:57.169Z" },
@@ -1494,7 +1494,7 @@ name = "nvidia-cufft-cu12"
 version = "11.3.3.41"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink-cu12", marker = "(python_full_version >= '3.14' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "nvidia-nvjitlink-cu12", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/72/95/6157cb45a49f5090a470de42353a22a0ed5b13077886dca891b4b0e350fe/nvidia_cufft_cu12-11.3.3.41-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:68509dcd7e3306e69d0e2d8a6d21c8b25ed62e6df8aac192ce752f17677398b5", size = 193108626, upload-time = "2025-01-23T17:55:49.192Z" },
@@ -1526,9 +1526,9 @@ name = "nvidia-cusolver-cu12"
 version = "11.7.2.55"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas-cu12", marker = "(python_full_version >= '3.14' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or sys_platform == 'win32'" },
-    { name = "nvidia-cusparse-cu12", marker = "(python_full_version >= '3.14' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or sys_platform == 'win32'" },
-    { name = "nvidia-nvjitlink-cu12", marker = "(python_full_version >= '3.14' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "nvidia-cublas-cu12", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cusparse-cu12", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-nvjitlink-cu12", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8c/ce/4214a892e804b20bf66d04f04a473006fc2d3dac158160ef85f1bc906639/nvidia_cusolver_cu12-11.7.2.55-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:0fd9e98246f43c15bee5561147ad235dfdf2d037f5d07c9d41af3f7f72feb7cc", size = 260094827, upload-time = "2025-01-23T17:58:17.586Z" },
@@ -1541,7 +1541,7 @@ name = "nvidia-cusparse-cu12"
 version = "12.5.7.53"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink-cu12", marker = "(python_full_version >= '3.14' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or sys_platform == 'win32'" },
+    { name = "nvidia-nvjitlink-cu12", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2e/a2/313db0453087f5324a5900380ca2e57e050c8de76f407b5e11383dc762ae/nvidia_cusparse_cu12-12.5.7.53-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:d869c6146ca80f4305b62e02d924b4aaced936f8173e3cef536a67eed2a91af1", size = 291963692, upload-time = "2025-01-23T17:59:40.325Z" },
@@ -2005,7 +2005,7 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
@@ -2478,8 +2478,8 @@ wheels = [
 [package.optional-dependencies]
 torch = [
     { name = "numpy" },
-    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
-    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-docling') or (extra == 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')" },
+    { name = "torch", version = "2.7.1", source = { registry = "https://pypi.org/simple" }, marker = "(sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
+    { name = "torch", version = "2.7.1+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "(sys_platform == 'linux' and extra == 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-docling') or (extra == 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')" },
 ]
 
 [[package]]
@@ -2600,7 +2600,7 @@ name = "semchunk"
 version = "3.2.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "mpire", extra = ["dill"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
+    { name = "mpire", extra = ["dill"], marker = "extra == 'extra-8-glyph-ai-docling'" },
     { name = "tqdm" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/a0/ce7e3d6cc76498fd594e667d10a03f17d7cced129e46869daec23523bf5a/semchunk-3.2.5.tar.gz", hash = "sha256:ee15e9a06a69a411937dd8fcf0a25d7ef389c5195863140436872a02c95b0218", size = 17667, upload-time = "2025-10-28T02:12:38.025Z" }
@@ -2760,7 +2760,7 @@ name = "textual"
 version = "8.2.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "markdown-it-py", extra = ["linkify"], marker = "extra == 'extra-12-booktutor-ai-docling'" },
+    { name = "markdown-it-py", extra = ["linkify"], marker = "extra == 'extra-8-glyph-ai-docling'" },
     { name = "mdit-py-plugins" },
     { name = "platformdirs" },
     { name = "pygments" },
@@ -2854,11 +2854,11 @@ name = "torch"
 version = "2.7.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
 ]
 dependencies = [
     { name = "filelock", marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
@@ -2885,11 +2885,11 @@ name = "torch"
 version = "2.7.1+cu128"
 source = { registry = "https://download.pytorch.org/whl/cu128" }
 resolution-markers = [
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')",
-    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')",
-    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling')",
-    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling'",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
+    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
+    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling')",
+    "python_full_version < '3.14' and platform_machine == 'aarch64' and platform_python_implementation == 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
 ]
 dependencies = [
     { name = "filelock", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
@@ -2946,11 +2946,11 @@ name = "torchvision"
 version = "0.22.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling'",
-    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform == 'darwin' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "python_full_version < '3.14' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling'",
+    "sys_platform != 'linux' and sys_platform != 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling'",
 ]
 dependencies = [
     { name = "numpy", marker = "sys_platform != 'linux' and sys_platform != 'win32'" },
@@ -2973,9 +2973,9 @@ name = "torchvision"
 version = "0.22.1+cu128"
 source = { registry = "https://download.pytorch.org/whl/cu128" }
 resolution-markers = [
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')",
-    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-12-booktutor-ai-deepseek2' and extra == 'extra-12-booktutor-ai-docling')",
-    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling') or (sys_platform == 'win32' and extra == 'extra-12-booktutor-ai-deepseek2' and extra != 'extra-12-booktutor-ai-docling')",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version >= '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
+    "(python_full_version < '3.14' and platform_machine != 'aarch64' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling') or (python_full_version < '3.14' and sys_platform == 'win32' and extra != 'extra-8-glyph-ai-deepseek2' and extra == 'extra-8-glyph-ai-docling')",
+    "(python_full_version >= '3.14' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_machine != 'aarch64' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (platform_python_implementation != 'CPython' and sys_platform == 'linux' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling') or (sys_platform == 'win32' and extra == 'extra-8-glyph-ai-deepseek2' and extra != 'extra-8-glyph-ai-docling')",
 ]
 dependencies = [
     { name = "numpy", marker = "(python_full_version >= '3.14' and sys_platform == 'linux') or (platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or sys_platform == 'win32'" },

@@ -1,4 +1,4 @@
-from booktutor.ds2_server import OcrRequest, OcrResponse
+from glyph.ds2_server import OcrRequest, OcrResponse
 
 
 def test_ocr_request_defaults():
