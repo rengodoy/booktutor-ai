@@ -12,7 +12,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -97,6 +97,14 @@ class Settings(BaseSettings):
     # (glyph-deepseek2-server / compose service `deepseek2`). Empty/down ->
     # that candidate is skipped (the run continues with the other engines).
     merge_deepseek2_url: str = Field(default="http://127.0.0.1:8001")
+
+    @field_validator("compose_project_name", mode="after")
+    @classmethod
+    def _clean_project_name(cls, v: str) -> str:
+        # python-dotenv keeps an inline comment as the value when the value is
+        # empty (``COMPOSE_PROJECT_NAME=   # note`` -> ``# note``); strip it so a
+        # commented-out / blank setting really means "no -p flag".
+        return v.split("#", 1)[0].strip()
 
     @property
     def compose_file_path(self) -> str:

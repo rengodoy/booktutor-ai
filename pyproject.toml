@@ -11,6 +11,7 @@ dependencies = [
     "pydantic-settings>=2.5.0",
     "openai>=1.30.0",       # Vision-LLM reconciler client (host, GPU0)
     "pypdfium2>=4.30",      # rasterize PDF pages + `none` text layer (zero deps)
+    "pillow>=10.0",         # pypdfium2 bitmap -> PNG (to_pil); torch-free
     "rich>=13.0",           # console progress bars / spinners (pure-python)
 ]
 

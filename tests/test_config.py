@@ -38,6 +38,13 @@ def test_service_defaults():
     assert s.health_poll_interval == 2.0
 
 
+def test_compose_project_name_strips_inline_comment(monkeypatch):
+    # python-dotenv keeps an inline comment as the value when it's empty.
+    monkeypatch.setenv("COMPOSE_PROJECT_NAME", "# optional name")
+    s = Settings(_env_file=None)
+    assert s.compose_project_name == ""
+
+
 def test_compose_file_path_is_absolute():
     import os
 
