@@ -116,6 +116,40 @@ def test_orchestrator_emits_event_sequence(monkeypatch):
     assert run_done["args"][2] == "out.md"
 
 
+def test_orchestrator_processes_only_selected_pages(monkeypatch):
+    import pypdfium2
+
+    monkeypatch.setattr(pypdfium2, "PdfDocument", _FakePdf)  # 2-page fake
+    rec = RecordingReporter()
+    loader = _loader(rec, [["easyocr"]], pages=[2])
+    monkeypatch.setattr(loader, "_ocr_engine_page", lambda e, b, t: "ocr")
+    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand: (0.99, "P2"))
+
+    out = loader.load()
+
+    assert out == "P2"  # one page only
+    run_start = [e for n, e in rec.events if n == "on_run_start"][0]
+    assert run_start["args"][1] == 1  # total_pages == selected count
+    starts = [e for n, e in rec.events if n == "on_page_start"]
+    assert len(starts) == 1
+    assert starts[0]["args"][0] == 2  # the real PDF page number
+
+
+def test_orchestrator_warns_on_out_of_range_pages(monkeypatch):
+    import pypdfium2
+
+    monkeypatch.setattr(pypdfium2, "PdfDocument", _FakePdf)  # 2-page fake
+    rec = RecordingReporter()
+    loader = _loader(rec, [["easyocr"]], pages=[2, 99])
+    monkeypatch.setattr(loader, "_ocr_engine_page", lambda e, b, t: "ocr")
+    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand: (0.99, "P2"))
+
+    out = loader.load()
+
+    assert out == "P2"  # page 99 dropped, page 2 kept
+    assert any(n == "on_message" and "99" in e["args"][1] for n, e in rec.events)
+
+
 def test_orchestrator_escalates_on_low_confidence(monkeypatch):
     import pypdfium2
 

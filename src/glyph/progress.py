@@ -110,6 +110,7 @@ class ConsoleReporter(BaseReporter):
         self._progress = None  # rich.progress.Progress | None
         self._page_task = None
         self._total_pages = 0
+        self._completed = 0  # pages finished this run (drives the bar; != page_no)
         self._service_tasks: dict[str, int] = {}
         self._engine_tasks: dict[tuple[int, str], int] = {}
         try:
@@ -142,6 +143,7 @@ class ConsoleReporter(BaseReporter):
         self, source: str, total_pages: int, tiers: list[list[str]]
     ) -> None:
         self._total_pages = total_pages
+        self._completed = 0
         ladder = " → ".join("+".join(t) for t in tiers)
         if not self._rich:
             print(f"📚 {source} — {total_pages} pages · ladder: {ladder}")
@@ -164,7 +166,9 @@ class ConsoleReporter(BaseReporter):
     def on_page_start(self, page_no: int, total_pages: int) -> None:
         if self._progress is None:
             return
-        self._progress.update(self._page_task, detail=self._page_detail(page_no - 1))
+        self._progress.update(
+            self._page_task, detail=self._page_detail(self._completed)
+        )
 
     def on_service_starting(self, service: str) -> None:
         if self._progress is None:
@@ -237,9 +241,9 @@ class ConsoleReporter(BaseReporter):
         next_tier: list[str] | None,
     ) -> None:
         label = "+".join(tier)
-        head = (
-            f"page {page_no}/{self._total_pages}: {label} → confidence {confidence:.2f}"
-        )
+        # page_no is the real PDF page (may be a subset); the bar carries overall
+        # progress, so the log just names the page.
+        head = f"page {page_no}: {label} → confidence {confidence:.2f}"
         if accepted:
             self._print(f"{head} [green]✓[/green]" if self._rich else f"{head} ✓")
         elif next_tier is not None:
@@ -252,10 +256,13 @@ class ConsoleReporter(BaseReporter):
             self._print(f"{head} (last tier, keeping best result)")
 
     def on_page_done(self, page_no: int, confidence: float, tier: list[str]) -> None:
+        self._completed += 1
         if self._progress is None:
             return
         self._progress.update(
-            self._page_task, completed=page_no, detail=self._page_detail(page_no)
+            self._page_task,
+            completed=self._completed,
+            detail=self._page_detail(self._completed),
         )
 
     def on_run_done(self, pages: int, elapsed: float, out_path: str) -> None:

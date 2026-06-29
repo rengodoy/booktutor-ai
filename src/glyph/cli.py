@@ -19,6 +19,29 @@ def _check_files_exist(paths: list[str]) -> bool:
     return not missing
 
 
+def _parse_pages(spec: str) -> list[int]:
+    """``"51-60"`` / ``"5"`` / ``"1-3,7,10-12"`` -> sorted unique 1-indexed pages."""
+    pages: set[int] = set()
+    for part in spec.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if "-" in part:
+            a, _, b = part.partition("-")
+            start, end = int(a), int(b)
+            if start < 1 or end < start:
+                raise ValueError(f"bad page range: {part!r}")
+            pages.update(range(start, end + 1))
+        else:
+            n = int(part)
+            if n < 1:
+                raise ValueError(f"bad page number: {part!r}")
+            pages.add(n)
+    if not pages:
+        raise ValueError("no pages selected")
+    return sorted(pages)
+
+
 def cmd_tui(args: argparse.Namespace, settings: Settings) -> int:
     try:
         from glyph.tui.app import GlyphApp
@@ -35,6 +58,13 @@ def cmd_tui(args: argparse.Namespace, settings: Settings) -> int:
 def cmd_extract(args: argparse.Namespace, settings: Settings) -> int:
     if not _check_files_exist([args.source]):
         return 1
+    pages: list[int] | None = None
+    if args.pages:
+        try:
+            pages = _parse_pages(args.pages)
+        except ValueError as exc:
+            print(f"❌ invalid --pages {args.pages!r}: {exc}", file=sys.stderr)
+            return 1
     from glyph.loaders import make_loader
     from glyph.progress import ConsoleReporter
     from glyph.services import ServiceManager
@@ -60,8 +90,16 @@ def cmd_extract(args: argparse.Namespace, settings: Settings) -> int:
         for sig in (signal.SIGINT, signal.SIGTERM):
             signal.signal(sig, _handle_signal)
 
-    out = Path(args.output) if args.output else Path(args.source).with_suffix(".md")
-    loader = make_loader(settings, args.source, services, reporter)
+    if args.output:
+        out = Path(args.output)
+    elif pages:
+        # Don't clobber a full-document .md with a partial run.
+        tag = args.pages.replace(",", "_").replace(" ", "")
+        src = Path(args.source)
+        out = src.with_name(f"{src.stem}.pages-{tag}.md")
+    else:
+        out = Path(args.source).with_suffix(".md")
+    loader = make_loader(settings, args.source, services, reporter, pages=pages)
     try:
         text = loader.load(out_path=str(out))
     finally:
@@ -84,6 +122,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_extract.add_argument("source", help="Path to the PDF to OCR.")
     p_extract.add_argument(
         "-o", "--output", help="Output markdown path (default: <source>.md)."
+    )
+    p_extract.add_argument(
+        "--pages",
+        metavar="SPEC",
+        help="Only these 1-indexed pages, e.g. '51-60', '5', '1-3,7,10-12' "
+        "(default <source>.pages-<spec>.md to avoid clobbering the full doc).",
     )
     p_extract.add_argument(
         "--keep-up",

@@ -93,6 +93,7 @@ class MergeOcrLoader:
         tiers: list[list[str]],
         services: ServiceManager,
         reporter: ProgressReporter | None = None,
+        pages: list[int] | None = None,
         languages: list[str] | None = None,
         force_full_page_ocr: bool = False,
         api_base: str,
@@ -110,6 +111,7 @@ class MergeOcrLoader:
         self.tiers = tiers
         self.services = services
         self.reporter: ProgressReporter = reporter or BaseReporter()
+        self.pages = pages  # 1-indexed PDF pages to process; None -> all
         self.languages = languages or ["en"]
         self.force_full_page_ocr = force_full_page_ocr
         self.api_base = api_base
@@ -218,11 +220,23 @@ class MergeOcrLoader:
         pages_md: list[str] = []
         start = time.monotonic()
         try:
-            self.npages = len(pdf)
+            total_in_pdf = len(pdf)
+            if self.pages:
+                selected = [p for p in self.pages if 1 <= p <= total_in_pdf]
+                dropped = [p for p in self.pages if not (1 <= p <= total_in_pdf)]
+                if dropped:
+                    self.reporter.on_message(
+                        "warn",
+                        f"ignoring pages outside 1–{total_in_pdf}: "
+                        f"{', '.join(map(str, dropped))}",
+                    )
+            else:
+                selected = list(range(1, total_in_pdf + 1))
+            self.npages = len(selected)
             self.reporter.on_run_start(self.file_path, self.npages, self.tiers)
             ntiers = len(self.tiers)
-            for idx in range(self.npages):
-                page_no = idx + 1
+            for page_no in selected:
+                idx = page_no - 1
                 self.reporter.on_page_start(page_no, self.npages)
 
                 page = pdf[idx]
@@ -290,6 +304,7 @@ def make_loader(
     file_path: str,
     services: ServiceManager | None = None,
     reporter: ProgressReporter | None = None,
+    pages: list[int] | None = None,
 ) -> MergeOcrLoader:
     """Build the OCR orchestrator for a PDF.
 
@@ -315,6 +330,7 @@ def make_loader(
         tiers=tiers,
         services=services,
         reporter=reporter,
+        pages=pages,
         languages=settings.ocr_language_list,
         force_full_page_ocr=settings.ocr_force_full_page,
         api_base=settings.merge_api_base,
