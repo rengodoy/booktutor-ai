@@ -5,8 +5,9 @@ nav sidebar, a content area that swaps views, and a footer of key bindings.
 Two themes (Midnight default / Ember) toggle at runtime with ``t``.
 
 Wired to the real OCR pipeline: Input selects PDFs, Engines picks the engine,
-``r`` runs extraction in a worker thread (live progress on Process), the result
-shows on Markdown and ``e`` writes it from Export.
+``r`` runs extraction in a worker (the blocking OCR offloaded via
+asyncio.to_thread; live progress on Process), the result shows on Markdown and
+``e`` writes it from Export.
 """
 
 from __future__ import annotations
@@ -160,28 +161,33 @@ class GlyphApp(App):
         self.query_one("#run-status", Static).update("● running")
         self._ocr_worker()
 
-    @work(thread=True, exclusive=True)
-    def _ocr_worker(self) -> None:
+    @work(exclusive=True)
+    async def _ocr_worker(self) -> None:
+        # Async worker: UI updates run on the event loop, the blocking OCR runs in
+        # a thread via asyncio.to_thread (avoids the call_from_thread deadlock that
+        # a thread=True worker hit under run_test).
+        import asyncio
+
         settings = Settings().model_copy(update={"ocr_engine": self.ocr_engine})
         paths = list(self.selected_paths)
         proc = self.query_one(ProcessView)
-        self.call_from_thread(proc.start_run, len(paths), self.ocr_engine)
+        proc.start_run(len(paths), self.ocr_engine)
 
         results: dict[str, str] = {}
         for i, path in enumerate(paths, 1):
-            self.call_from_thread(proc.log_line, f"[#6a7488]{path.name}[/] — running")
+            proc.log_line(f"[#6a7488]{path.name}[/] — running")
             try:
-                markdown = make_loader(settings, str(path)).load()
+                markdown = await asyncio.to_thread(
+                    lambda p=path: make_loader(settings, str(p)).load()
+                )
             except Exception as exc:  # noqa: BLE001
                 markdown = ""
-                self.call_from_thread(
-                    proc.log_line, f"[#e06c6c]✗[/] {path.name}: {exc}"
-                )
+                proc.log_line(f"[#e06c6c]✗[/] {path.name}: {exc}")
             results[path.name] = markdown
-            self.call_from_thread(proc.finish_file, i, path.name, len(markdown))
+            proc.finish_file(i, path.name, len(markdown))
 
         self.results = results
-        self.call_from_thread(self._on_ocr_done)
+        self._on_ocr_done()
 
     def _on_ocr_done(self) -> None:
         self.query_one("#run-status", Static).update("● done")

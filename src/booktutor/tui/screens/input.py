@@ -33,7 +33,9 @@ class InputView(Horizontal):
         browse = Vertical(classes="panel", id="browse")
         browse.border_title = "BROWSE · NAVEGAR"
         with browse:
-            yield Static("[$text-dim]📂 select PDFs (enter)[/]", markup=True, id="crumb")
+            yield Static(
+                "[$text-dim]📂 select PDFs (enter)[/]", markup=True, id="crumb"
+            )
             yield DirectoryTree(".", id="file-tree")
             yield Static(
                 "[$text-faint]enter a .pdf to (de)select · then press [/]"
@@ -78,7 +80,9 @@ class InputView(Horizontal):
         for p in paths:
             pages = _page_count(p)
             total_pages += pages or 0
-            tag = f"[$text-dim]{pages}p[/]" if pages is not None else "[$text-faint]?[/]"
+            tag = (
+                f"[$text-dim]{pages}p[/]" if pages is not None else "[$text-faint]?[/]"
+            )
             lines.append(f"[$text-bright]{p.name}[/]  {tag}")
         lines.append(f"\n[$accent]{len(paths)} files · {total_pages} pages[/]")
         sel.update("\n".join(lines))
