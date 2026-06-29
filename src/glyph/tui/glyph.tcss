@@ -79,6 +79,23 @@ Screen {
     padding: 0 0 0 1;
 }
 
+/* --- Layout B: top-tabs nav instead of the left sidebar ------------------ */
+#topnav { display: none; background: $surface; }
+Screen.layout-b #topnav { display: block; }
+Screen.layout-b #nav { display: none; }
+
+#dashb-top { height: 1fr; }
+#dashb-hero { width: 1fr; }
+#dashb-bars-wrap { height: 1fr; }
+#dashb-bars { width: 1fr; }
+#dashb-thumb { width: 22; background: $panel; }
+#dashb-right { width: 38; }
+#dashb-engines { height: 1fr; }
+#dashb-stats { height: 8; }
+#dashb-queue { height: 7; }
+#dashb-activity { height: 9; }
+#dashb-activity RichLog { background: transparent; }
+
 /* --- panels (border with title) ------------------------------------------ */
 .panel {
     border: round $glyph-border;

@@ -85,4 +85,7 @@ Verificação: screenshots headless (run_test + save_screenshot → SVG → PNG 
 ## Questões em aberto
 - [x] Renomear o projeto `booktutor` → `glyph` (pacote `src/glyph`, comandos
       `glyph` / `glyph-deepseek2-server`, imagens `rengodoy/glyph-*`).
-- [ ] Layout B do dashboard (variante alternativa) — opcional.
+- [x] Layout B do dashboard (frame 3): toggle `b` troca a sidebar por top-tabs
+      (Tabs) e o Dashboard pela variante NOW PROCESSING + QUEUE + ENGINES/STATS +
+      ACTIVITY (`DashboardBView`). Os dois navs ficam sincronizados. Validado por
+      screenshot.

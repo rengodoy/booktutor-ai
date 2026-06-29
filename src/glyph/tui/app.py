@@ -26,12 +26,15 @@ from textual.widgets import (
     ListItem,
     ListView,
     Static,
+    Tab,
+    Tabs,
 )
 
 from glyph.config import Settings
 from glyph.loaders import make_loader
 from glyph.tui.screens.compare import CompareView
 from glyph.tui.screens.dashboard import DashboardView
+from glyph.tui.screens.dashboard_b import DashboardBView
 from glyph.tui.screens.engines import EnginesView
 from glyph.tui.screens.export import ExportView
 from glyph.tui.screens.input import InputView
@@ -80,6 +83,7 @@ class GlyphApp(App):
     BINDINGS = [
         ("r", "run_ocr", "Run · Rodar"),
         ("e", "export", "Export · Exportar"),
+        ("b", "toggle_layout", "Layout"),
         ("t", "toggle_theme", "Theme · Tema"),
         ("l", "toggle_lang", "Lang"),
         ("question_mark", "help", "Help · Ajuda"),
@@ -98,9 +102,14 @@ class GlyphApp(App):
         self.ocr_engine: str = "easyocr"
         self.out_dir: str = "out/markdown"
         self.results: dict[str, str] = {}
+        self.layout_mode: str = "sidebar"  # "sidebar" (canonical) | "topbar" (Layout B)
 
     def compose(self) -> ComposeResult:
         yield GlyphHeader(id="glyph-header")
+        yield Tabs(
+            *(Tab(lbl, id=f"tab-{key}") for key, lbl, _ in NAV),
+            id="topnav",
+        )
         with Horizontal(id="body"):
             nav = Vertical(id="nav")
             nav.border_title = "PIPELINE · FLUXO"
@@ -118,6 +127,7 @@ class GlyphApp(App):
                 )
             with ContentSwitcher(initial="dashboard", id="content"):
                 yield DashboardView(id="dashboard")
+                yield DashboardBView(id="dashboard-b")
                 yield InputView(id="input")
                 yield EnginesView(id="engines")
                 yield ProcessView(id="process")
@@ -127,19 +137,44 @@ class GlyphApp(App):
         yield Footer()
 
     # --- navigation -------------------------------------------------------
+    def _current_key(self) -> str:
+        current = self.query_one("#content", ContentSwitcher).current or "dashboard"
+        return "dashboard" if current == "dashboard-b" else current
+
     def show_view(self, key: str) -> None:
-        self.query_one("#content", ContentSwitcher).current = key
+        # In Layout B the Dashboard renders the document-focused variant.
+        target = (
+            "dashboard-b"
+            if (key == "dashboard" and self.layout_mode == "topbar")
+            else key
+        )
+        content = self.query_one("#content", ContentSwitcher)
+        if content.current != target:
+            content.current = target
         self.query_one("#subtitle", Static).update(_SUBTITLE.get(key, ""))
+        # keep both navs (sidebar + top-tabs) in sync; setters are guarded so the
+        # change events they fire converge instead of looping.
         nav = self.query_one("#nav-list", ListView)
         if key in _INDEX and nav.index != _INDEX[key]:
             nav.index = _INDEX[key]
+        tabs = self.query_one("#topnav", Tabs)
+        if tabs.active != f"tab-{key}":
+            tabs.active = f"tab-{key}"
 
     def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
         if event.item is None or event.item.id is None:
             return
-        key = event.item.id.removeprefix("nav-")
-        self.query_one("#content", ContentSwitcher).current = key
-        self.query_one("#subtitle", Static).update(_SUBTITLE.get(key, ""))
+        self.show_view(event.item.id.removeprefix("nav-"))
+
+    def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
+        if event.tabs.id != "topnav" or event.tab.id is None:
+            return  # ignore other Tabs (e.g. the Markdown file tabs)
+        self.show_view(event.tab.id.removeprefix("tab-"))
+
+    def action_toggle_layout(self) -> None:
+        self.layout_mode = "topbar" if self.layout_mode == "sidebar" else "sidebar"
+        self.screen.set_class(self.layout_mode == "topbar", "layout-b")
+        self.show_view(self._current_key())
 
     # --- pipeline state ---------------------------------------------------
     def toggle_file(self, path: Path) -> None:
