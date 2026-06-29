@@ -54,6 +54,16 @@ def test_make_loader_merge():
     assert loader.deepseek2_url == "http://127.0.0.1:8001"
 
 
+def test_prose_mode_adds_reflow_instructions():
+    # Default on: the system prompt tells the reconciler to reflow into prose.
+    on = make_loader(_settings(), "book.pdf")
+    assert "flowing prose" in on.system_prompt
+    off = make_loader(_settings(merge_prose=False), "book.pdf")
+    assert "flowing prose" not in off.system_prompt
+    # Base reconciliation instructions stay in both.
+    assert "reconcile OCR output" in off.system_prompt
+
+
 def test_make_loader_passes_services_and_reporter():
     # Explicit services/reporter are threaded onto the loader.
     sentinel_services = object()

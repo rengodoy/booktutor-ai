@@ -93,6 +93,10 @@ class Settings(BaseSettings):
     merge_max_tokens: int = Field(default=8192)
     merge_dpi: int = Field(default=144)
     merge_min_confidence: float = Field(default=0.85)
+    # Reflow body text into continuous prose: strip page numbers / running
+    # headers-footers and join words split across lines, instead of mirroring the
+    # page's physical line breaks. Set false to keep the literal layout.
+    merge_prose: bool = Field(default=True)
     # The "deepseek2" source tier calls the standalone DeepSeek-OCR-2 HTTP server
     # (glyph-deepseek2-server / compose service `deepseek2`). Empty/down ->
     # that candidate is skipped (the run continues with the other engines).

@@ -23,6 +23,10 @@ def test_ocr_language_list(monkeypatch):
     assert s.ocr_language_list == ["pt", "en"]
 
 
+def test_merge_prose_default_on():
+    assert Settings(_env_file=None).merge_prose is True
+
+
 def test_service_defaults():
     s = Settings(_env_file=None)
     assert s.docling_server_port == 8002

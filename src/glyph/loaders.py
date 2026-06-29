@@ -69,6 +69,19 @@ _MERGE_SYSTEM = (
     'Respond ONLY with a JSON object: {"confidence": <float>, "markdown": <string>}.'
 )
 
+# Optional addendum: reflow body text into continuous prose instead of mirroring
+# the page's physical line breaks. Appended to the system prompt when prose mode
+# is on (the default).
+_MERGE_PROSE = (
+    " Format body text as flowing prose: merge the hard line breaks that come only "
+    "from the page layout so each paragraph is a single continuous line. Join words "
+    "split across lines — drop a hyphen used to break a word, otherwise join with a "
+    "single space. Remove standalone page numbers and running headers/footers that "
+    "interrupt the text. Keep genuine paragraph breaks (a blank line between "
+    "paragraphs) and preserve headings, lists and tables as Markdown. Do not add, "
+    "drop, summarize or reorder any actual content."
+)
+
 
 class MergeOcrLoader:
     """Adaptive multi-engine OCR reconciled by a Vision-LLM.
@@ -102,6 +115,7 @@ class MergeOcrLoader:
         max_tokens: int = 8192,
         dpi: int = 144,
         min_confidence: float = 0.85,
+        prose: bool = True,
         docling_url: str = "http://127.0.0.1:8002",
         deepseek2_url: str = "http://127.0.0.1:8001",
         docling_timeout: float = 180.0,
@@ -112,6 +126,9 @@ class MergeOcrLoader:
         self.services = services
         self.reporter: ProgressReporter = reporter or BaseReporter()
         self.pages = pages  # 1-indexed PDF pages to process; None -> all
+        # Reflow body text into continuous prose (strip page numbers / hard line
+        # breaks) vs. mirror the page's physical layout.
+        self.system_prompt = _MERGE_SYSTEM + (_MERGE_PROSE if prose else "")
         self.languages = languages or ["en"]
         self.force_full_page_ocr = force_full_page_ocr
         self.api_base = api_base
@@ -178,7 +195,7 @@ class MergeOcrLoader:
         resp = client.chat.completions.create(
             model=self.model,
             messages=[
-                {"role": "system", "content": _MERGE_SYSTEM},
+                {"role": "system", "content": self.system_prompt},
                 {
                     "role": "user",
                     "content": [
@@ -339,6 +356,7 @@ def make_loader(
         max_tokens=settings.merge_max_tokens,
         dpi=settings.merge_dpi,
         min_confidence=settings.merge_min_confidence,
+        prose=settings.merge_prose,
         docling_url=settings.merge_docling_url,
         deepseek2_url=settings.merge_deepseek2_url,
         docling_timeout=settings.docling_health_timeout,

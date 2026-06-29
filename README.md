@@ -87,6 +87,7 @@ All config is environment variables / `.env` (see [`.env.example`](.env.example)
 |---|---|
 | `MERGE_TIERS` | escalation ladder, simplest→strongest. `;`-separated tiers, each a `,`-list of engines. Default: `easyocr;tesseract;easyocr,tesseract;easyocr,tesseract,deepseek2` |
 | `MERGE_MIN_CONFIDENCE` | escalate while the reconciler's confidence is below this (default `0.85`) |
+| `MERGE_PROSE` | `true` (default) reflows body text into continuous prose — strips page numbers / running headers-footers and joins words split across lines; `false` keeps the page's literal line breaks |
 | `MERGE_MODEL` | the Vision-LLM reconciler/judge (default `gemma-qat`) |
 | `MERGE_API_BASE` | the reconciler endpoint (default the host: `http://127.0.0.1:8080/v1`) |
 | `MERGE_DOCLING_URL` / `MERGE_DEEPSEEK2_URL` | the on-demand engine services (default `127.0.0.1:8002` / `:8001`) |
