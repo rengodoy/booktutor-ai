@@ -42,19 +42,6 @@ def _parse_pages(spec: str) -> list[int]:
     return sorted(pages)
 
 
-def cmd_tui(args: argparse.Namespace, settings: Settings) -> int:
-    try:
-        from glyph.tui.app import GlyphApp
-    except ImportError:
-        print(
-            "The TUI needs the optional 'tui' group: uv sync --group tui",
-            file=sys.stderr,
-        )
-        return 1
-    GlyphApp().run()
-    return 0
-
-
 def cmd_extract(args: argparse.Namespace, settings: Settings) -> int:
     if not _check_files_exist([args.source]):
         return 1
@@ -148,9 +135,6 @@ def build_parser() -> argparse.ArgumentParser:
         "(no escalation, ignores MERGE_MIN_CONFIDENCE).",
     )
     p_extract.set_defaults(func=cmd_extract)
-
-    p_tui = sub.add_parser("tui", help="Launch the glyph TUI.")
-    p_tui.set_defaults(func=cmd_tui)
 
     return parser
 

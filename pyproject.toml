@@ -52,10 +52,6 @@ deepseek2 = [
     "fastapi>=0.110",
     "uvicorn>=0.29",
 ]
-# The glyph TUI (parked — built later). Lazy-imported by `glyph tui`.
-tui = [
-    "textual>=0.80",
-]
 dev = [
     "pytest>=8.2.0",
     "ruff>=0.6.0",
@@ -70,7 +66,7 @@ packages = ["src/glyph"]
 
 [tool.uv]
 # Local install = base + dev only (thin orchestrator). docling/deepseek2 are
-# image-only (built into their Dockerfiles via --group); tui is opt-in.
+# image-only (built into their Dockerfiles via --group).
 default-groups = ["dev"]
 # docling and deepseek2 pull incompatible transformers majors; mark them as
 # conflicting so uv resolves each branch separately into one lockfile.

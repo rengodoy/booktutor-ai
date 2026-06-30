@@ -636,7 +636,7 @@ def make_loader(
     ``OCR_ENGINE=merge`` uses the full ladder; any other value pins a single
     engine (a one-tier ladder) through the same orchestrator. ``services`` /
     ``reporter`` default to a manager built from ``settings`` and a no-op reporter
-    so callers (e.g. a future TUI worker) can omit them.
+    so callers can omit them.
     """
     if services is None:
         services = ServiceManager(

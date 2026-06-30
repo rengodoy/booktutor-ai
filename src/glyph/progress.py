@@ -1,5 +1,5 @@
 """Progress / status reporting — the layer that decouples the orchestrator from
-its UI so the CLI works now and a TUI can plug in later.
+its UI.
 
 The orchestrator emits coarse-grained events (:class:`ProgressReporter`); a
 reporter renders them. :class:`ConsoleReporter` (the one the CLI uses) draws a
@@ -7,9 +7,9 @@ page progress bar plus transient spinners/bars for on-demand service loads and
 per-engine attempts, so the user always sees that work is happening and roughly
 how far along it is — model loads can take minutes.
 
-A future ``TuiReporter`` implements the *same* protocol against Textual widgets
-(see the redesign notes in the plan). Keep new events additive: add a default
-no-op to :class:`BaseReporter` so existing reporters keep working.
+Any alternative front end implements the *same* protocol. Keep new events
+additive: add a default no-op to :class:`BaseReporter` so existing reporters keep
+working.
 
 ``fraction=None`` is a first-class value meaning "indeterminate" — the UI shows a
 spinner / pulsing bar rather than a percentage.
