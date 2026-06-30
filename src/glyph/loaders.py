@@ -30,7 +30,7 @@ from glyph.services import ServiceError, ServiceManager
 _DOCLING_ENGINES = {"easyocr", "tesseract"}
 
 # Markdown lines that must not be glued to a neighbour across a page break.
-_STRUCT_PREFIXES = ("#", ">", "|", "```", "    ")
+_STRUCT_PREFIXES = ("#", ">", "|", "```", "![")
 _LIST_RE = re.compile(r"^\s*(?:[-*+]\s|\d+[.)]\s)")
 
 
@@ -144,6 +144,69 @@ _MERGE_PROSE = (
     "drop, summarize or reorder any actual content."
 )
 
+# Optional addendum: ask the reconciler to mark each figure with a Markdown image
+# placeholder (empty URL) at its position. The orchestrator extracts the embedded
+# images from the PDF and fills these URLs in afterwards (see ``_embed_page_images``).
+_MERGE_IMAGES = (
+    " For each figure, photo, screenshot, chart or diagram on the page, emit a "
+    "Markdown image at its position with an EMPTY url and the figure's caption as "
+    "alt text, e.g. ![Figura 6 - Sistema e-SIC](). Do not invent a url — it is "
+    "filled in afterwards. Still transcribe any caption and source lines (e.g. "
+    "'Figura 6 - ...', 'Fonte: ...') as normal text around the image."
+)
+
+# Markdown image tags: ``![alt](url)``. ``_EMPTY_IMG_RE`` is one we couldn't back
+# with an extracted file (left with an empty url) -> dropped so there's no broken
+# link, keeping the surrounding caption text.
+_IMG_RE = re.compile(r"!\[(?P<alt>[^\]]*)\]\((?P<url>[^)]*)\)")
+_EMPTY_IMG_RE = re.compile(r"!\[[^\]]*\]\(\s*\)")
+
+
+def _order_figures(items: list[tuple], min_pt: float) -> list:
+    """Filter / dedupe / order embedded images into figures, reading order.
+
+    ``items`` is ``[(ref, left, bottom, right, top), ...]`` with bounds in PDF
+    points. Drops anything smaller than ``min_pt`` on either side (icons, bullets,
+    header strips), dedupes by bounding box (pdfium can repeat an object), and
+    sorts top-to-bottom then left-to-right. Returns the kept ``ref`` values.
+    """
+    seen: set[tuple] = set()
+    kept: list[tuple] = []
+    for ref, left, bottom, right, top in items:
+        if (right - left) < min_pt or (top - bottom) < min_pt:
+            continue
+        key = (round(left, 1), round(bottom, 1), round(right, 1), round(top, 1))
+        if key in seen:
+            continue
+        seen.add(key)
+        kept.append((ref, left, bottom, right, top))
+    kept.sort(key=lambda x: (-x[4], x[1]))  # top desc, then left asc
+    return [x[0] for x in kept]
+
+
+def _embed_page_images(md: str, rel_paths: list[str]) -> str:
+    """Back the reconciler's image placeholders with extracted figure files.
+
+    Fills each ``![alt]()`` url with the next extracted path (reading order),
+    drops any placeholder we couldn't back with a file, and appends any leftover
+    extracted images the reconciler didn't place. Collapses blank-line runs.
+    """
+    paths = iter(rel_paths)
+
+    def _fill(m: re.Match) -> str:
+        try:
+            path = next(paths)
+        except StopIteration:
+            return m.group(0)  # no file left -> stripped by _EMPTY_IMG_RE below
+        return f"![{m.group('alt')}]({path})"
+
+    out = _IMG_RE.sub(_fill, md)
+    leftover = list(paths)
+    out = _EMPTY_IMG_RE.sub("", out)  # drop placeholders with no backing file
+    if leftover:
+        out = out.rstrip() + "\n\n" + "\n\n".join(f"![]({p})" for p in leftover)
+    return re.sub(r"\n{3,}", "\n\n", out).strip()
+
 
 class MergeOcrLoader:
     """Adaptive multi-engine OCR reconciled by a Vision-LLM.
@@ -178,6 +241,8 @@ class MergeOcrLoader:
         dpi: int = 144,
         min_confidence: float = 0.85,
         prose: bool = True,
+        images: bool = True,
+        min_figure_pt: float = 72.0,
         docling_url: str = "http://127.0.0.1:8002",
         deepseek2_url: str = "http://127.0.0.1:8001",
         docling_timeout: float = 180.0,
@@ -192,7 +257,15 @@ class MergeOcrLoader:
         # breaks) vs. mirror the page's physical layout. When on, also stitch a
         # sentence/word split across a page break (see ``_join_pages``).
         self.prose = prose
-        self.system_prompt = _MERGE_SYSTEM + (_MERGE_PROSE if prose else "")
+        # Extract embedded figures as files and back the reconciler's image
+        # placeholders with real links (see ``_extract_page_images``).
+        self.images = images
+        self.min_figure_pt = min_figure_pt
+        self.system_prompt = (
+            _MERGE_SYSTEM
+            + (_MERGE_PROSE if prose else "")
+            + (_MERGE_IMAGES if images else "")
+        )
         self.languages = languages or ["en"]
         self.force_full_page_ocr = force_full_page_ocr
         self.api_base = api_base
@@ -276,6 +349,46 @@ class MergeOcrLoader:
         )
         return _parse_reconcile(resp.choices[0].message.content or "")
 
+    def _extract_page_images(
+        self, page, page_no: int, assets_dir, assets_rel: str
+    ) -> list[str]:
+        """Save the page's embedded figures as PNGs -> their markdown-relative paths.
+
+        Enumerates image objects, keeps the figure-sized ones (``_order_figures``),
+        renders each to a PNG under ``assets_dir`` and returns the paths to use in
+        the markdown (``assets_rel/p<NN>-img<MM>.png``), in reading order.
+        """
+        import pypdfium2.raw as pdfium_raw
+
+        items: list[tuple] = []
+        for obj in page.get_objects():
+            if obj.type != pdfium_raw.FPDF_PAGEOBJ_IMAGE:
+                continue
+            try:
+                left, bottom, right, top = obj.get_bounds()
+            except Exception:  # noqa: BLE001 — skip an object we can't place
+                continue
+            items.append((obj, left, bottom, right, top))
+
+        rel_paths: list[str] = []
+        for n, obj in enumerate(_order_figures(items, self.min_figure_pt), 1):
+            try:
+                image = obj.get_bitmap(render=True).to_pil()
+                if image.mode == "RGBA" and image.getchannel("A").getextrema() == (
+                    255,
+                    255,
+                ):
+                    image = image.convert("RGB")  # opaque -> drop alpha, smaller file
+                assets_dir.mkdir(parents=True, exist_ok=True)
+                name = f"p{page_no:03d}-img{n}.png"
+                image.save(assets_dir / name, format="PNG", optimize=True)
+                rel_paths.append(f"{assets_rel}/{name}")
+            except Exception as exc:  # noqa: BLE001 — one bad figure shouldn't fail the page
+                self.reporter.on_message(
+                    "warn", f"page {page_no}: could not extract a figure — {exc}"
+                )
+        return rel_paths
+
     @staticmethod
     def _page_text_layer(page) -> str:
         """The PDF's embedded text for a page (used by the ``none`` engine)."""
@@ -292,6 +405,7 @@ class MergeOcrLoader:
         """Return the reconciled document as markdown (pages joined)."""
         import base64
         import io
+        from pathlib import Path
 
         import pypdfium2 as pdfium
         from openai import OpenAI
@@ -299,6 +413,11 @@ class MergeOcrLoader:
         client = OpenAI(base_url=self.api_base, api_key=self.api_key)
         pdf = pdfium.PdfDocument(self.file_path)
         pages_md: list[str] = []
+        # Figures are written to a sibling "<output stem>.assets/" dir so the
+        # markdown links resolve next to the .md file.
+        out_basis = Path(out_path) if out_path else Path(self.file_path)
+        assets_rel = f"{out_basis.stem}.assets"
+        assets_dir = out_basis.parent / assets_rel
         start = time.monotonic()
         try:
             total_in_pdf = len(pdf)
@@ -326,6 +445,11 @@ class MergeOcrLoader:
                 bitmap.to_pil().save(buf, format="PNG")
                 png_b64 = base64.b64encode(buf.getvalue()).decode()
                 page_text = self._page_text_layer(page)
+                page_images = (
+                    self._extract_page_images(page, page_no, assets_dir, assets_rel)
+                    if self.images
+                    else []
+                )
 
                 engine_text: dict[str, str] = {}
                 chosen_md = ""
@@ -367,6 +491,8 @@ class MergeOcrLoader:
                     if accepted:
                         break
 
+                if self.images:
+                    chosen_md = _embed_page_images(chosen_md, page_images)
                 pages_md.append(chosen_md)
                 self.reporter.on_page_done(page_no, page_conf, page_tier)
         finally:
@@ -423,6 +549,8 @@ def make_loader(
         dpi=settings.merge_dpi,
         min_confidence=settings.merge_min_confidence,
         prose=settings.merge_prose,
+        images=settings.merge_images,
+        min_figure_pt=settings.merge_min_figure_pt,
         docling_url=settings.merge_docling_url,
         deepseek2_url=settings.merge_deepseek2_url,
         docling_timeout=settings.docling_health_timeout,

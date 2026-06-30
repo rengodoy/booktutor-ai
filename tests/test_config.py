@@ -27,6 +27,12 @@ def test_merge_prose_default_on():
     assert Settings(_env_file=None).merge_prose is True
 
 
+def test_merge_images_defaults():
+    s = Settings(_env_file=None)
+    assert s.merge_images is True
+    assert s.merge_min_figure_pt == 72.0
+
+
 def test_service_defaults():
     s = Settings(_env_file=None)
     assert s.docling_server_port == 8002

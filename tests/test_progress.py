@@ -58,6 +58,9 @@ class _FakePage:
     def get_textpage(self):
         return _FakeTextpage()
 
+    def get_objects(self):
+        return []  # no embedded figures in the fake page
+
 
 class _FakePdf:
     def __init__(self, path):

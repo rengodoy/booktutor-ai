@@ -88,6 +88,8 @@ All config is environment variables / `.env` (see [`.env.example`](.env.example)
 | `MERGE_TIERS` | escalation ladder, simplest→strongest. `;`-separated tiers, each a `,`-list of engines. Default: `easyocr;tesseract;easyocr,tesseract;easyocr,tesseract,deepseek2` |
 | `MERGE_MIN_CONFIDENCE` | escalate while the reconciler's confidence is below this (default `0.85`) |
 | `MERGE_PROSE` | `true` (default) reflows body text into continuous prose — strips page numbers / running headers-footers, joins words split across lines, and stitches a sentence/word split across a page break; `false` keeps the page's literal line breaks |
+| `MERGE_IMAGES` | `true` (default) extracts figures embedded in the PDF as PNGs into a sibling `<name>.assets/` dir and points the markdown image links at them so they render; `false` leaves figures out |
+| `MERGE_MIN_FIGURE_PT` | minimum displayed size (PDF points) for an embedded image to count as a figure — filters icons / bullets / header strips (default `72`, i.e. 1 inch) |
 | `MERGE_MODEL` | the Vision-LLM reconciler/judge (default `gemma-qat`) |
 | `MERGE_API_BASE` | the reconciler endpoint (default the host: `http://127.0.0.1:8080/v1`) |
 | `MERGE_DOCLING_URL` / `MERGE_DEEPSEEK2_URL` | the on-demand engine services (default `127.0.0.1:8002` / `:8001`) |

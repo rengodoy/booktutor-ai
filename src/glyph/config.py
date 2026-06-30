@@ -97,6 +97,13 @@ class Settings(BaseSettings):
     # headers-footers and join words split across lines, instead of mirroring the
     # page's physical line breaks. Set false to keep the literal layout.
     merge_prose: bool = Field(default=True)
+    # Extract figures embedded in the PDF as image files next to the .md and back
+    # the reconciler's image placeholders with real links (so they render). Set
+    # false to leave figures out. ``merge_min_figure_pt`` is the minimum displayed
+    # width AND height (in PDF points) for an embedded image to count as a figure
+    # — filters out icons, bullets and header strips (1 pt = 1/72 inch).
+    merge_images: bool = Field(default=True)
+    merge_min_figure_pt: float = Field(default=72.0)
     # The "deepseek2" source tier calls the standalone DeepSeek-OCR-2 HTTP server
     # (glyph-deepseek2-server / compose service `deepseek2`). Empty/down ->
     # that candidate is skipped (the run continues with the other engines).

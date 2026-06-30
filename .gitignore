@@ -21,6 +21,8 @@ indexes/
 *.pdf
 pdf/
 books/
+# Extracted figures written next to a generated .md (glyph extract)
+*.assets/
 
 
 design_handoff_glyph_tui/*

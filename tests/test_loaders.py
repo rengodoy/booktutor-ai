@@ -1,5 +1,12 @@
 from glyph.config import Settings
-from glyph.loaders import MergeOcrLoader, _join_pages, _parse_reconcile, make_loader
+from glyph.loaders import (
+    MergeOcrLoader,
+    _embed_page_images,
+    _join_pages,
+    _order_figures,
+    _parse_reconcile,
+    make_loader,
+)
 
 
 def _settings(**over) -> Settings:
@@ -103,6 +110,59 @@ def test_join_pages_merges_only_boundary_line():
 def test_join_pages_drops_empty_pages():
     out = _join_pages(["primeira", "", "Segunda."])
     assert out == "primeira\n\nSegunda."
+
+
+def test_order_figures_filters_dedupes_and_sorts():
+    items = [
+        ("icon", 0, 0, 50, 50),  # 50x50 < 72pt -> dropped
+        ("a", 100, 500, 300, 700),  # top=700, left=100
+        ("a_dup", 100, 500, 300, 700),  # same bounds -> deduped
+        ("b", 50, 100, 250, 300),  # top=300 -> lower on the page
+        ("c", 400, 500, 600, 700),  # top=700, left=400 -> right of a
+    ]
+    # reading order: top-to-bottom, then left-to-right.
+    assert _order_figures(items, 72.0) == ["a", "c", "b"]
+
+
+def test_embed_images_fills_placeholders_in_order():
+    md = "Texto.\n\n![Figura 1]()\n\nMais texto.\n\n![Figura 2]()"
+    out = _embed_page_images(md, ["x.assets/p001-img1.png", "x.assets/p001-img2.png"])
+    assert "![Figura 1](x.assets/p001-img1.png)" in out
+    assert "![Figura 2](x.assets/p001-img2.png)" in out
+
+
+def test_embed_images_drops_unbacked_placeholder():
+    # No file for the placeholder -> drop the tag (no broken link), keep captions.
+    out = _embed_page_images("Antes.\n\n![Figura sem arquivo]()\n\nDepois.", [])
+    assert "![" not in out
+    assert "Antes." in out and "Depois." in out
+
+
+def test_embed_images_appends_leftover_figure():
+    # The reconciler emitted no placeholder -> append the extracted figure.
+    out = _embed_page_images("Só texto, sem marcação.", ["a.assets/p001-img1.png"])
+    assert out.endswith("![](a.assets/p001-img1.png)")
+
+
+def test_embed_images_more_images_than_placeholders_appends():
+    out = _embed_page_images("![cap]()", ["d/i1.png", "d/i2.png"])
+    assert "![cap](d/i1.png)" in out
+    assert out.rstrip().endswith("![](d/i2.png)")
+
+
+def test_embed_images_more_placeholders_than_images_drops_extra():
+    out = _embed_page_images("![a]()\n\n![b]()", ["d/i1.png"])
+    assert "![a](d/i1.png)" in out
+    assert "![b]" not in out  # unbacked placeholder dropped (no broken link)
+
+
+def test_make_loader_threads_image_settings():
+    on = make_loader(_settings(), "book.pdf")
+    assert on.images is True
+    assert "Markdown image" in on.system_prompt
+    off = make_loader(_settings(merge_images=False), "book.pdf")
+    assert off.images is False
+    assert "Markdown image" not in off.system_prompt
 
 
 def test_make_loader_passes_services_and_reporter():
