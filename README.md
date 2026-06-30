@@ -77,7 +77,8 @@ glyph extract books/livro.pdf
 > start, that tier is skipped and the run continues with the other engines.
 
 Useful flags: `--keep-up` (leave the services running for the next run),
-`--no-autostart` (assume the services are already up; don't spin them).
+`--no-autostart` (assume the services are already up; don't spin them),
+`--no-escalate` (run only the first tier and accept its result — no escalation).
 
 ## Tuning the ladder
 
@@ -87,6 +88,7 @@ All config is environment variables / `.env` (see [`.env.example`](.env.example)
 |---|---|
 | `MERGE_TIERS` | escalation ladder, simplest→strongest. `;`-separated tiers, each a `,`-list of engines. Default: `easyocr;tesseract;easyocr,tesseract;easyocr,tesseract,deepseek2` |
 | `MERGE_MIN_CONFIDENCE` | escalate while the reconciler's confidence is below this (default `0.85`) |
+| `MERGE_ESCALATE` | `true` (default) walks the ladder while confidence is low; `false` runs only the first `MERGE_TIERS` tier and accepts its result (one-off: `--no-escalate`) |
 | `MERGE_PROSE` | `true` (default) reflows body text into continuous prose — strips page numbers / running headers-footers, joins words split across lines, and stitches a sentence/word split across a page break; `false` keeps the page's literal line breaks |
 | `MERGE_IMAGES` | `true` (default) extracts figures embedded in the PDF as PNGs into a sibling `<name>.assets/` dir and points the markdown image links at them so they render; `false` leaves figures out |
 | `MERGE_MIN_FIGURE_PT` | minimum displayed size (PDF points) for an embedded image to count as a figure — filters icons / bullets / header strips (default `72`, i.e. 1 inch) |

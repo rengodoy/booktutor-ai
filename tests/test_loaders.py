@@ -198,6 +198,12 @@ def test_make_loader_threads_image_settings():
     assert "Markdown image" not in off.system_prompt
 
 
+def test_make_loader_threads_escalate_setting():
+    assert make_loader(_settings(), "book.pdf").escalate is True
+    off = make_loader(_settings(merge_escalate=False), "book.pdf")
+    assert off.escalate is False
+
+
 def test_make_loader_threads_table_settings():
     on = make_loader(_settings(), "book.pdf")
     assert on.tables is True

@@ -177,6 +177,30 @@ def test_orchestrator_escalates_on_low_confidence(monkeypatch):
     assert page1[1]["args"][3] is True
 
 
+def test_orchestrator_does_not_escalate_when_disabled(monkeypatch):
+    import pypdfium2
+
+    monkeypatch.setattr(pypdfium2, "PdfDocument", _FakePdf)  # 2-page fake
+    rec = RecordingReporter()
+    # Two tiers, but escalation off -> only the first tier ever runs.
+    loader = _loader(rec, [["easyocr"], ["tesseract"]], escalate=False)
+    monkeypatch.setattr(loader, "_ocr_engine_page", lambda e, b, t: f"ocr-{e}")
+    # Always low confidence: with escalation it would climb; here it must not.
+    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand, prev="": (0.10, "MD"))
+
+    loader.load()
+
+    reconciles = [e for n, e in rec.events if n == "on_reconcile"]
+    assert len(reconciles) == 2  # one per page, never a second tier
+    for e in reconciles:
+        assert e["args"][1] == ["easyocr"]  # tier
+        assert e["args"][3] is True  # accepted despite 0.10 confidence
+        assert e["args"][4] is None  # next_tier
+    # tesseract tier was never invoked.
+    engines = {e["args"][1] for n, e in rec.events if n == "on_engine_start"}
+    assert engines == {"easyocr"}
+
+
 def test_orchestrator_degrades_on_service_error(monkeypatch):
     import pypdfium2
 

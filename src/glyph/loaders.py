@@ -319,6 +319,7 @@ class MergeOcrLoader:
         max_tokens: int = 8192,
         dpi: int = 144,
         min_confidence: float = 0.85,
+        escalate: bool = True,
         prose: bool = True,
         images: bool = True,
         min_figure_pt: float = 72.0,
@@ -359,6 +360,9 @@ class MergeOcrLoader:
         self.max_tokens = max_tokens
         self.dpi = dpi
         self.min_confidence = min_confidence
+        # Walk the tier ladder while confidence is low. Off -> run only the first
+        # tier and accept its result (min_confidence ignored).
+        self.escalate = escalate
         self.docling_url = docling_url
         self.deepseek2_url = deepseek2_url
         self.docling_timeout = docling_timeout
@@ -530,8 +534,10 @@ class MergeOcrLoader:
             else:
                 selected = list(range(1, total_in_pdf + 1))
             self.npages = len(selected)
-            self.reporter.on_run_start(self.file_path, self.npages, self.tiers)
-            ntiers = len(self.tiers)
+            # Effective ladder: only the first tier when escalation is disabled.
+            tiers = self.tiers if self.escalate else self.tiers[:1]
+            ntiers = len(tiers)
+            self.reporter.on_run_start(self.file_path, self.npages, tiers)
             want_context = self.tables or self.prose
             prev_tail = ""  # tail of the previous page's reconciled markdown
             prev_page_no: int | None = None
@@ -558,8 +564,8 @@ class MergeOcrLoader:
                 engine_text: dict[str, str] = {}
                 chosen_md = ""
                 page_conf = 0.0
-                page_tier = self.tiers[-1] if self.tiers else []
-                for tier_idx, tier in enumerate(self.tiers):
+                page_tier = tiers[-1] if tiers else []
+                for tier_idx, tier in enumerate(tiers):
                     for engine in tier:
                         if engine in engine_text:
                             continue
@@ -585,10 +591,11 @@ class MergeOcrLoader:
                     )
                     page_conf = confidence
                     page_tier = tier
-                    accepted = confidence >= self.min_confidence
+                    # When escalation is off we accept the first tier outright.
+                    accepted = (not self.escalate) or confidence >= self.min_confidence
                     next_tier = (
-                        self.tiers[tier_idx + 1]
-                        if (not accepted and tier_idx + 1 < ntiers)
+                        tiers[tier_idx + 1]
+                        if (self.escalate and not accepted and tier_idx + 1 < ntiers)
                         else None
                     )
                     self.reporter.on_reconcile(
@@ -657,6 +664,7 @@ def make_loader(
         max_tokens=settings.merge_max_tokens,
         dpi=settings.merge_dpi,
         min_confidence=settings.merge_min_confidence,
+        escalate=settings.merge_escalate,
         prose=settings.merge_prose,
         images=settings.merge_images,
         min_figure_pt=settings.merge_min_figure_pt,

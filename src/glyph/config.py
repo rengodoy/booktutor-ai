@@ -93,6 +93,11 @@ class Settings(BaseSettings):
     merge_max_tokens: int = Field(default=8192)
     merge_dpi: int = Field(default=144)
     merge_min_confidence: float = Field(default=0.85)
+    # Escalate the tier ladder while confidence < merge_min_confidence. Set false
+    # to run only the first MERGE_TIERS tier and accept its result regardless of
+    # confidence (merge_min_confidence is then ignored). Only affects the `merge`
+    # engine with more than one tier.
+    merge_escalate: bool = Field(default=True)
     # Reflow body text into continuous prose: strip page numbers / running
     # headers-footers and join words split across lines, instead of mirroring the
     # page's physical line breaks. Set false to keep the literal layout.

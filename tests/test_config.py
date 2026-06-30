@@ -37,6 +37,10 @@ def test_merge_tables_default_on():
     assert Settings(_env_file=None).merge_tables is True
 
 
+def test_merge_escalate_default_on():
+    assert Settings(_env_file=None).merge_escalate is True
+
+
 def test_service_defaults():
     s = Settings(_env_file=None)
     assert s.docling_server_port == 8002

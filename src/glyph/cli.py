@@ -65,6 +65,8 @@ def cmd_extract(args: argparse.Namespace, settings: Settings) -> int:
         except ValueError as exc:
             print(f"❌ invalid --pages {args.pages!r}: {exc}", file=sys.stderr)
             return 1
+    if args.no_escalate:
+        settings = settings.model_copy(update={"merge_escalate": False})
     from glyph.loaders import make_loader
     from glyph.progress import ConsoleReporter
     from glyph.services import ServiceManager
@@ -138,6 +140,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-autostart",
         action="store_true",
         help="Assume engine services are already running; don't spin them up.",
+    )
+    p_extract.add_argument(
+        "--no-escalate",
+        action="store_true",
+        help="Run only the first MERGE_TIERS tier and accept its result "
+        "(no escalation, ignores MERGE_MIN_CONFIDENCE).",
     )
     p_extract.set_defaults(func=cmd_extract)
 

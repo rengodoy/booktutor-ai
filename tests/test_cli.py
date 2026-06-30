@@ -1,6 +1,6 @@
 import pytest
 
-from glyph.cli import _parse_pages
+from glyph.cli import _parse_pages, build_parser
 
 
 def test_parse_single_page():
@@ -23,3 +23,13 @@ def test_parse_whitespace_tolerated():
 def test_parse_rejects_bad(bad):
     with pytest.raises(ValueError):
         _parse_pages(bad)
+
+
+def test_no_escalate_flag_defaults_false():
+    args = build_parser().parse_args(["extract", "book.pdf"])
+    assert args.no_escalate is False
+
+
+def test_no_escalate_flag_set():
+    args = build_parser().parse_args(["extract", "book.pdf", "--no-escalate"])
+    assert args.no_escalate is True
