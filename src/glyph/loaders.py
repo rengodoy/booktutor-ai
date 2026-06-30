@@ -20,6 +20,7 @@ the extracted markdown.
 
 from __future__ import annotations
 
+import re
 import time
 
 from glyph.progress import BaseReporter, ProgressReporter
@@ -27,6 +28,67 @@ from glyph.services import ServiceError, ServiceManager
 
 # Engines served by the docling HTTP service.
 _DOCLING_ENGINES = {"easyocr", "tesseract"}
+
+# Markdown lines that must not be glued to a neighbour across a page break.
+_STRUCT_PREFIXES = ("#", ">", "|", "```", "    ")
+_LIST_RE = re.compile(r"^\s*(?:[-*+]\s|\d+[.)]\s)")
+
+
+def _structural_line(line: str) -> bool:
+    """True for a heading / list item / table row / code fence / blank line."""
+    s = line.strip()
+    if not s:
+        return True
+    if s.startswith(_STRUCT_PREFIXES):
+        return True
+    return bool(_LIST_RE.match(line))
+
+
+def _continues_sentence(head: str) -> bool:
+    """The first line of a page continues the previous page's sentence.
+
+    Its first letter is lowercase — a fresh paragraph/sentence would start
+    uppercase, so a lowercase start is almost always a mid-sentence carry-over.
+    """
+    m = re.search(r"[^\W\d_]", head)
+    return bool(m) and m.group(0).islower()
+
+
+def _join_pages(pages: list[str]) -> str:
+    """Join page markdowns, merging a sentence/word split across a page break.
+
+    Most boundaries keep the usual blank-line paragraph break. But when a page
+    ends mid-word (a trailing ``-``) or the next page starts mid-sentence (a
+    lowercase first letter) and neither side is structural (heading/list/table/
+    code), the two paragraphs are glued into one continuous line — the cross-page
+    tail of the per-page prose reflow. Empty pages are dropped.
+    """
+    out = ""
+    for page in pages:
+        page = page.strip("\n")
+        if not page.strip():
+            continue
+        if not out:
+            out = page
+            continue
+        prev = out.rstrip()
+        prev_lines = prev.split("\n")
+        cur_lines = page.split("\n")
+        tail, head = prev_lines[-1], cur_lines[0]
+        if (
+            not _structural_line(tail)
+            and not _structural_line(head)
+            and (tail.rstrip().endswith("-") or _continues_sentence(head))
+        ):
+            tail_text, head_text = tail.rstrip(), head.lstrip()
+            if tail_text.endswith("-"):
+                glued = tail_text[:-1] + head_text  # de-hyphenate a split word
+            else:
+                glued = tail_text + " " + head_text
+            out = "\n".join(prev_lines[:-1] + [glued] + cur_lines[1:])
+        else:
+            out = prev + "\n\n" + page
+    return out
 
 
 def _parse_reconcile(content: str) -> tuple[float, str]:
@@ -127,7 +189,9 @@ class MergeOcrLoader:
         self.reporter: ProgressReporter = reporter or BaseReporter()
         self.pages = pages  # 1-indexed PDF pages to process; None -> all
         # Reflow body text into continuous prose (strip page numbers / hard line
-        # breaks) vs. mirror the page's physical layout.
+        # breaks) vs. mirror the page's physical layout. When on, also stitch a
+        # sentence/word split across a page break (see ``_join_pages``).
+        self.prose = prose
         self.system_prompt = _MERGE_SYSTEM + (_MERGE_PROSE if prose else "")
         self.languages = languages or ["en"]
         self.force_full_page_ocr = force_full_page_ocr
@@ -313,6 +377,8 @@ class MergeOcrLoader:
                 len(pages_md), self.elapsed, out_path or self.file_path
             )
 
+        if self.prose:
+            return _join_pages(pages_md)
         return "\n\n".join(pages_md)
 
 

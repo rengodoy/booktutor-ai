@@ -1,5 +1,5 @@
 from glyph.config import Settings
-from glyph.loaders import MergeOcrLoader, _parse_reconcile, make_loader
+from glyph.loaders import MergeOcrLoader, _join_pages, _parse_reconcile, make_loader
 
 
 def _settings(**over) -> Settings:
@@ -62,6 +62,47 @@ def test_prose_mode_adds_reflow_instructions():
     assert "flowing prose" not in off.system_prompt
     # Base reconciliation instructions stay in both.
     assert "reconcile OCR output" in off.system_prompt
+
+
+def test_join_pages_merges_lowercase_continuation():
+    # Next page starts mid-sentence (lowercase) -> glue with a single space.
+    out = _join_pages(["A informação pode ser", "pública ou privada."])
+    assert out == "A informação pode ser pública ou privada."
+
+
+def test_join_pages_dehyphenates_word_split_across_pages():
+    # Page ends mid-word (trailing hyphen) -> drop the hyphen, no space.
+    out = _join_pages(["O documento foi classifica-", "ção do acervo."])
+    assert out == "O documento foi classificação do acervo."
+
+
+def test_join_pages_keeps_break_on_new_paragraph():
+    # Next page starts a fresh sentence (uppercase) -> keep the paragraph break.
+    out = _join_pages(["Fim do parágrafo.", "Novo parágrafo começa aqui."])
+    assert out == "Fim do parágrafo.\n\nNovo parágrafo começa aqui."
+
+
+def test_join_pages_does_not_merge_into_heading():
+    # A heading on the next page is structural -> never glued.
+    out = _join_pages(["texto corrido anterior", "## Capítulo 2"])
+    assert out == "texto corrido anterior\n\n## Capítulo 2"
+
+
+def test_join_pages_does_not_merge_structural_tail():
+    # A list item at the page tail stays intact even if the head is lowercase.
+    out = _join_pages(["- item de lista", "continuação solta"])
+    assert out == "- item de lista\n\ncontinuação solta"
+
+
+def test_join_pages_merges_only_boundary_line():
+    # Only the boundary paragraphs glue; the rest of each page is preserved.
+    out = _join_pages(["# Título\n\nfrase que vira a", "página seguinte.\n\nOutro."])
+    assert out == "# Título\n\nfrase que vira a página seguinte.\n\nOutro."
+
+
+def test_join_pages_drops_empty_pages():
+    out = _join_pages(["primeira", "", "Segunda."])
+    assert out == "primeira\n\nSegunda."
 
 
 def test_make_loader_passes_services_and_reporter():
