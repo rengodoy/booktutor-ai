@@ -103,7 +103,7 @@ def test_orchestrator_emits_event_sequence(monkeypatch):
     rec = RecordingReporter()
     loader = _loader(rec, [["easyocr"]])
     monkeypatch.setattr(loader, "_ocr_engine_page", lambda e, b, t: f"ocr-{e}")
-    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand: (0.99, "MD"))
+    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand, prev="": (0.99, "MD"))
 
     out = loader.load(out_path="out.md")
 
@@ -126,7 +126,7 @@ def test_orchestrator_processes_only_selected_pages(monkeypatch):
     rec = RecordingReporter()
     loader = _loader(rec, [["easyocr"]], pages=[2])
     monkeypatch.setattr(loader, "_ocr_engine_page", lambda e, b, t: "ocr")
-    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand: (0.99, "P2"))
+    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand, prev="": (0.99, "P2"))
 
     out = loader.load()
 
@@ -145,7 +145,7 @@ def test_orchestrator_warns_on_out_of_range_pages(monkeypatch):
     rec = RecordingReporter()
     loader = _loader(rec, [["easyocr"]], pages=[2, 99])
     monkeypatch.setattr(loader, "_ocr_engine_page", lambda e, b, t: "ocr")
-    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand: (0.99, "P2"))
+    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand, prev="": (0.99, "P2"))
 
     out = loader.load()
 
@@ -162,7 +162,7 @@ def test_orchestrator_escalates_on_low_confidence(monkeypatch):
     monkeypatch.setattr(loader, "_ocr_engine_page", lambda e, b, t: f"ocr-{e}")
 
     # easyocr tier -> low; tesseract tier -> high.
-    def fake_reconcile(client, b64, candidates):
+    def fake_reconcile(client, b64, candidates, prev=""):
         return (0.95, "GOOD") if "tesseract" in candidates else (0.50, "BAD")
 
     monkeypatch.setattr(loader, "_reconcile", fake_reconcile)
@@ -190,7 +190,9 @@ def test_orchestrator_degrades_on_service_error(monkeypatch):
         raise ServiceError("deepseek2 down")
 
     monkeypatch.setattr(loader, "_ocr_engine_page", boom)
-    monkeypatch.setattr(loader, "_reconcile", lambda c, b, cand: (0.9, "FALLBACK"))
+    monkeypatch.setattr(
+        loader, "_reconcile", lambda c, b, cand, prev="": (0.9, "FALLBACK")
+    )
 
     out = loader.load()
 

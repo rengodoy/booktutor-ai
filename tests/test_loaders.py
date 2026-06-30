@@ -112,6 +112,39 @@ def test_join_pages_drops_empty_pages():
     assert out == "primeira\n\nSegunda."
 
 
+_T1 = "| A | B |\n| --- | --- |\n| 1 | 2 |"
+
+
+def test_join_pages_stitches_table_with_repeated_header():
+    # Continuation repeats the header -> drop the repeat, append only new rows.
+    page2 = "| A | B |\n| --- | --- |\n| 3 | 4 |"
+    out = _join_pages([_T1, page2])
+    assert out == "| A | B |\n| --- | --- |\n| 1 | 2 |\n| 3 | 4 |"
+
+
+def test_join_pages_stitches_headerless_table_continuation():
+    # Continuation is just more rows -> appended directly.
+    out = _join_pages([_T1, "| 3 | 4 |\n| 5 | 6 |"])
+    assert out == "| A | B |\n| --- | --- |\n| 1 | 2 |\n| 3 | 4 |\n| 5 | 6 |"
+
+
+def test_join_pages_table_then_prose_keeps_separation():
+    out = _join_pages([_T1, "| 3 | 4 |\n\nParágrafo novo."])
+    assert out == ("| A | B |\n| --- | --- |\n| 1 | 2 |\n| 3 | 4 |\n\nParágrafo novo.")
+
+
+def test_join_pages_does_not_stitch_tables_with_different_columns():
+    page2 = "| X | Y | Z |\n| --- | --- | --- |\n| 7 | 8 | 9 |"
+    out = _join_pages([_T1, page2])
+    assert out == f"{_T1}\n\n{page2}"
+
+
+def test_join_pages_tables_off_keeps_fragments():
+    page2 = "| A | B |\n| --- | --- |\n| 3 | 4 |"
+    out = _join_pages([_T1, page2], prose=True, tables=False)
+    assert out == f"{_T1}\n\n{page2}"
+
+
 def test_order_figures_filters_dedupes_and_sorts():
     items = [
         ("icon", 0, 0, 50, 50),  # 50x50 < 72pt -> dropped
@@ -163,6 +196,60 @@ def test_make_loader_threads_image_settings():
     off = make_loader(_settings(merge_images=False), "book.pdf")
     assert off.images is False
     assert "Markdown image" not in off.system_prompt
+
+
+def test_make_loader_threads_table_settings():
+    on = make_loader(_settings(), "book.pdf")
+    assert on.tables is True
+    assert "PREVIOUS page" in on.system_prompt  # continuation addendum present
+    off = make_loader(_settings(merge_tables=False, merge_prose=False), "book.pdf")
+    assert off.tables is False
+    assert "PREVIOUS page" not in off.system_prompt
+
+
+class _CapturingClient:
+    """Fake OpenAI client recording the last create() kwargs."""
+
+    def __init__(self):
+        self.captured: dict = {}
+
+        class _Msg:
+            content = '{"confidence": 0.9, "markdown": "x"}'
+
+        class _Choice:
+            message = _Msg()
+
+        class _Resp:
+            choices = [_Choice()]
+
+        outer = self
+
+        class _Completions:
+            def create(self, **kw):
+                outer.captured = kw
+                return _Resp()
+
+        class _Chat:
+            completions = _Completions()
+
+        self.chat = _Chat()
+
+
+def test_reconcile_includes_previous_page_context():
+    loader = make_loader(_settings(), "book.pdf")
+    client = _CapturingClient()
+    loader._reconcile(client, "b64", {"easyocr": "txt"}, "TAIL FROM PREV PAGE")
+    user_text = client.captured["messages"][1]["content"][0]["text"]
+    assert "TAIL FROM PREV PAGE" in user_text
+    assert "PREVIOUS page" in user_text
+
+
+def test_reconcile_omits_context_when_no_previous_tail():
+    loader = make_loader(_settings(), "book.pdf")
+    client = _CapturingClient()
+    loader._reconcile(client, "b64", {"easyocr": "txt"}, "")
+    user_text = client.captured["messages"][1]["content"][0]["text"]
+    assert "PREVIOUS page" not in user_text
 
 
 def test_make_loader_passes_services_and_reporter():

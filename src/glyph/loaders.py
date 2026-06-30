@@ -54,14 +54,76 @@ def _continues_sentence(head: str) -> bool:
     return bool(m) and m.group(0).islower()
 
 
-def _join_pages(pages: list[str]) -> str:
-    """Join page markdowns, merging a sentence/word split across a page break.
+def _is_table_row(line: str) -> bool:
+    s = line.strip()
+    return s.startswith("|") and s.count("|") >= 2
 
-    Most boundaries keep the usual blank-line paragraph break. But when a page
-    ends mid-word (a trailing ``-``) or the next page starts mid-sentence (a
-    lowercase first letter) and neither side is structural (heading/list/table/
-    code), the two paragraphs are glued into one continuous line — the cross-page
-    tail of the per-page prose reflow. Empty pages are dropped.
+
+def _is_separator_row(line: str) -> bool:
+    """A Markdown table separator like ``| --- | :--: |``."""
+    s = line.strip()
+    return bool(re.fullmatch(r"\|[\s:|-]+\|", s)) and "-" in s
+
+
+def _table_cols(line: str) -> int:
+    return len(line.strip().strip("|").split("|"))
+
+
+def _trailing_table_start(lines: list[str]) -> int:
+    """Index where the page's trailing run of table rows starts (``len`` if none)."""
+    i = len(lines)
+    while i > 0 and _is_table_row(lines[i - 1]):
+        i -= 1
+    return i
+
+
+def _leading_table_end(lines: list[str]) -> int:
+    """Index just past the page's leading run of table rows (``0`` if none)."""
+    j = 0
+    while j < len(lines) and _is_table_row(lines[j]):
+        j += 1
+    return j
+
+
+def _stitch_tables(prev_lines: list[str], cur_lines: list[str]) -> list[str] | None:
+    """Merge a table split across a page break, or ``None`` if there isn't one.
+
+    The previous page must end with table rows and the current page must begin
+    with table rows of the same column count. The continuation's repeated header
+    (header + separator) — or a stray leading separator — is dropped, then its
+    body rows are appended to the previous table. Any non-table remainder of the
+    current page is kept after a blank line.
+    """
+    ts = _trailing_table_start(prev_lines)
+    te = _leading_table_end(cur_lines)
+    prev_tbl, cur_tbl = prev_lines[ts:], cur_lines[:te]
+    if not prev_tbl or not cur_tbl:
+        return None
+    if _table_cols(prev_tbl[-1]) != _table_cols(cur_tbl[0]):
+        return None
+    cont = cur_tbl
+    if len(cont) >= 2 and _is_separator_row(cont[1]):
+        cont = cont[2:]  # drop a repeated "header + separator"
+    elif cont and _is_separator_row(cont[0]):
+        cont = cont[1:]  # drop a stray leading separator
+    merged = prev_lines[:ts] + prev_tbl + cont
+    rest = cur_lines[te:]
+    while rest and not rest[0].strip():
+        rest = rest[1:]  # drop blank lines between the table and the rest
+    if rest:
+        merged += [""] + rest
+    return merged
+
+
+def _join_pages(pages: list[str], *, prose: bool = True, tables: bool = True) -> str:
+    """Join page markdowns, stitching content split across a page break.
+
+    Per boundary, in order: if ``tables`` and both sides are a table with matching
+    columns, the table is stitched into one (repeated header dropped). Else if
+    ``prose`` and the page ends mid-word (trailing ``-``) or the next starts
+    mid-sentence (lowercase first letter) and neither side is structural, the two
+    paragraphs are glued into one line. Otherwise the usual blank-line paragraph
+    break is kept. Empty pages are dropped.
     """
     out = ""
     for page in pages:
@@ -74,9 +136,14 @@ def _join_pages(pages: list[str]) -> str:
         prev = out.rstrip()
         prev_lines = prev.split("\n")
         cur_lines = page.split("\n")
+        stitched = _stitch_tables(prev_lines, cur_lines) if tables else None
+        if stitched is not None:
+            out = "\n".join(stitched)
+            continue
         tail, head = prev_lines[-1], cur_lines[0]
         if (
-            not _structural_line(tail)
+            prose
+            and not _structural_line(tail)
             and not _structural_line(head)
             and (tail.rstrip().endswith("-") or _continues_sentence(head))
         ):
@@ -153,6 +220,18 @@ _MERGE_IMAGES = (
     "alt text, e.g. ![Figura 6 - Sistema e-SIC](). Do not invent a url — it is "
     "filled in afterwards. Still transcribe any caption and source lines (e.g. "
     "'Figura 6 - ...', 'Fonte: ...') as normal text around the image."
+)
+
+# Optional addendum: the reconciler is handed the tail of the previous page so it
+# can continue a structure that spans the page break. Appended when prose or table
+# stitching is on.
+_MERGE_CONTINUATION = (
+    " You may be given the tail of the PREVIOUS page purely as context. Do not "
+    "re-transcribe it — transcribe only the current page (the image). If the "
+    "current page continues a table, list or sentence from the previous page, "
+    "continue it seamlessly with the SAME structure. For a table that continues, "
+    "reuse the exact same columns; repeating the header row is fine (the tool "
+    "merges a table split across pages)."
 )
 
 # Markdown image tags: ``![alt](url)``. ``_EMPTY_IMG_RE`` is one we couldn't back
@@ -243,6 +322,7 @@ class MergeOcrLoader:
         prose: bool = True,
         images: bool = True,
         min_figure_pt: float = 72.0,
+        tables: bool = True,
         docling_url: str = "http://127.0.0.1:8002",
         deepseek2_url: str = "http://127.0.0.1:8001",
         docling_timeout: float = 180.0,
@@ -261,10 +341,15 @@ class MergeOcrLoader:
         # placeholders with real links (see ``_extract_page_images``).
         self.images = images
         self.min_figure_pt = min_figure_pt
+        # Stitch a table split across a page break, and feed the previous page's
+        # tail to the reconciler so it continues spanning structures (see
+        # ``_stitch_tables`` / ``_MERGE_CONTINUATION``).
+        self.tables = tables
         self.system_prompt = (
             _MERGE_SYSTEM
             + (_MERGE_PROSE if prose else "")
             + (_MERGE_IMAGES if images else "")
+            + (_MERGE_CONTINUATION if (prose or tables) else "")
         )
         self.languages = languages or ["en"]
         self.force_full_page_ocr = force_full_page_ocr
@@ -319,12 +404,24 @@ class MergeOcrLoader:
         )
 
     def _reconcile(
-        self, client, png_b64: str, candidates: dict[str, str]
+        self,
+        client,
+        png_b64: str,
+        candidates: dict[str, str],
+        prev_tail: str = "",
     ) -> tuple[float, str]:
         blocks = "\n\n".join(
             f"### OCR engine: {eng}\n{txt}" for eng, txt in candidates.items()
         )
+        context = ""
+        if prev_tail.strip():
+            context = (
+                "Tail of the PREVIOUS page (context only — do NOT re-transcribe; "
+                "use it to continue any table/list/sentence that spans the page "
+                f"break):\n\n{prev_tail.strip()}\n\n---\n\n"
+            )
         user_text = (
+            f"{context}"
             "Candidate OCR transcriptions:\n\n"
             f"{blocks}\n\n"
             "Return the reconciled Markdown and your confidence as JSON."
@@ -435,9 +532,16 @@ class MergeOcrLoader:
             self.npages = len(selected)
             self.reporter.on_run_start(self.file_path, self.npages, self.tiers)
             ntiers = len(self.tiers)
+            want_context = self.tables or self.prose
+            prev_tail = ""  # tail of the previous page's reconciled markdown
+            prev_page_no: int | None = None
             for page_no in selected:
                 idx = page_no - 1
                 self.reporter.on_page_start(page_no, self.npages)
+                # Only feed continuation context between physically adjacent pages
+                # (a non-contiguous --pages selection must not bleed across gaps).
+                adjacent = prev_page_no is not None and page_no == prev_page_no + 1
+                tail_ctx = prev_tail if adjacent else ""
 
                 page = pdf[idx]
                 bitmap = page.render(scale=self.dpi / 72.0)
@@ -476,7 +580,9 @@ class MergeOcrLoader:
                         self.reporter.on_engine_done(page_no, engine, len(txt))
 
                     candidates = {eng: engine_text[eng] for eng in tier}
-                    confidence, chosen_md = self._reconcile(client, png_b64, candidates)
+                    confidence, chosen_md = self._reconcile(
+                        client, png_b64, candidates, tail_ctx
+                    )
                     page_conf = confidence
                     page_tier = tier
                     accepted = confidence >= self.min_confidence
@@ -491,6 +597,9 @@ class MergeOcrLoader:
                     if accepted:
                         break
 
+                # Capture the tail BEFORE image embed (no link junk in the context).
+                prev_tail = chosen_md[-1200:] if want_context else ""
+                prev_page_no = page_no
                 if self.images:
                     chosen_md = _embed_page_images(chosen_md, page_images)
                 pages_md.append(chosen_md)
@@ -503,8 +612,8 @@ class MergeOcrLoader:
                 len(pages_md), self.elapsed, out_path or self.file_path
             )
 
-        if self.prose:
-            return _join_pages(pages_md)
+        if self.prose or self.tables:
+            return _join_pages(pages_md, prose=self.prose, tables=self.tables)
         return "\n\n".join(pages_md)
 
 
@@ -551,6 +660,7 @@ def make_loader(
         prose=settings.merge_prose,
         images=settings.merge_images,
         min_figure_pt=settings.merge_min_figure_pt,
+        tables=settings.merge_tables,
         docling_url=settings.merge_docling_url,
         deepseek2_url=settings.merge_deepseek2_url,
         docling_timeout=settings.docling_health_timeout,

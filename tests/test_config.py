@@ -33,6 +33,10 @@ def test_merge_images_defaults():
     assert s.merge_min_figure_pt == 72.0
 
 
+def test_merge_tables_default_on():
+    assert Settings(_env_file=None).merge_tables is True
+
+
 def test_service_defaults():
     s = Settings(_env_file=None)
     assert s.docling_server_port == 8002

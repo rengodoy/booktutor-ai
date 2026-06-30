@@ -104,6 +104,11 @@ class Settings(BaseSettings):
     # — filters out icons, bullets and header strips (1 pt = 1/72 inch).
     merge_images: bool = Field(default=True)
     merge_min_figure_pt: float = Field(default=72.0)
+    # Stitch a table split across a page break into one table (drops the repeated
+    # header on the continuation). Also feeds the previous page's tail to the
+    # reconciler so it continues a table/list/sentence seamlessly. Set false to
+    # keep each page's table fragment as-is.
+    merge_tables: bool = Field(default=True)
     # The "deepseek2" source tier calls the standalone DeepSeek-OCR-2 HTTP server
     # (glyph-deepseek2-server / compose service `deepseek2`). Empty/down ->
     # that candidate is skipped (the run continues with the other engines).
